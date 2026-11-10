@@ -7,6 +7,40 @@
 // or stored. Only the sanitised subscription fields are returned.
 
 const UPSTREAM = 'https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27';
+const UPSTREAM_ME = 'https://chatgpt.com/backend-api/me';
+
+const UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
+
+function upstreamHeaders(token) {
+  return {
+    Authorization: 'Bearer ' + token,
+    Accept: '*/*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    Referer: 'https://chatgpt.com/',
+    Origin: 'https://chatgpt.com',
+    'User-Agent': UA,
+  };
+}
+
+// Best-effort profile fetch (name/phone/picture). Never fails the check.
+async function fetchProfile(token) {
+  try {
+    const r = await fetch(UPSTREAM_ME, { headers: upstreamHeaders(token) });
+    if (!r.ok) return null;
+    const me = await r.json();
+    if (!me || typeof me !== 'object') return null;
+    return {
+      name: me.name ?? null,
+      email: me.email ?? null,
+      phone: me.phone ?? null,
+      picture: me.picture ?? me.image ?? null,
+      mfa: me.mfa ?? null,
+    };
+  } catch {
+    return null;
+  }
+}
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -42,17 +76,7 @@ export default {
 
     let upstream;
     try {
-      upstream = await fetch(UPSTREAM, {
-        headers: {
-          Authorization: 'Bearer ' + token,
-          Accept: '*/*',
-          'Accept-Language': 'en-US,en;q=0.9',
-          Referer: 'https://chatgpt.com/',
-          Origin: 'https://chatgpt.com',
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',
-        },
-      });
+      upstream = await fetch(UPSTREAM, { headers: upstreamHeaders(token) });
     } catch (e) {
       return json({ error: 'Upstream request failed: ' + String(e && e.message || e) }, 502);
     }
@@ -75,6 +99,7 @@ export default {
         account: {
           plan_type: info.account?.plan_type,
           structure: info.account?.structure,
+          name: info.account?.name ?? null,
         },
         entitlement: {
           subscription_plan: info.entitlement?.subscription_plan,
@@ -85,6 +110,7 @@ export default {
         },
       };
     }
-    return json({ accounts });
+    const profile = await fetchProfile(token);
+    return json({ accounts, profile });
   },
 };

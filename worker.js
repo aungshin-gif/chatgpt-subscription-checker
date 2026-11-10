@@ -61,6 +61,9 @@ export default {
       return json({ error: 'Session expired (401). Get a fresh Session JSON.' }, 401);
     }
     if (!upstream.ok) {
+      if (upstream.status === 403) {
+        return json({ error: 'ChatGPT blocked Cloudflare Worker (403). Use the VPS proxy (api/server.py) instead.' }, 403);
+      }
       return json({ error: 'ChatGPT returned ' + upstream.status }, upstream.status);
     }
 

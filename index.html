@@ -142,7 +142,10 @@ async function checkSub(){
     if(proxyUrl){
       const r=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken:token})});
       if(!r.ok){ const t=await r.text().catch(()=> ''); showError('Proxy error ('+r.status+'): '+t.slice(0,300)+'\nSession အသစ်ပြန်ယူကြည့်ပါ။'); return; }
-      data=await r.json();
+      const text=await r.text();
+      try{ data=JSON.parse(text); }
+      catch(e){ showError('Proxy က JSON မပြန်ဘူး — ပြန်လာတာ: "'+text.slice(0,80)+'"\n\nWorker ထဲမှာ Hello World ပဲ ရှိနေသေးတယ်။ worker.js ကုဒ်အပြည့်ကို paste လုပ်ပြီး Deploy ပြန်နှိပ်ပါ၊ ပြီးမှ ပြန်စစ်ပါ။'); return; }
+      if(!data || !data.accounts){ showError('Proxy က subscription အဖြေ မပြန်ဘူး။ Worker ကုဒ်မှန်လား၊ Deploy လုပ်ပြီးလား ပြန်စစ်ပါ။'); return; }
     } else {
       try{
         const r=await fetch('https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27',{headers:{'Authorization':'Bearer '+token,'Accept':'*/*'}});

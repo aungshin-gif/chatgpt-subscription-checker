@@ -23,6 +23,49 @@ UPSTREAM = "https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27"
 PORT = int(os.environ.get("PORT", "8787"))
 
 
+UPSTREAM_ME = "https://chatgpt.com/backend-api/me"
+UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/120.0 Safari/537.36"
+)
+
+
+def upstream_headers(token):
+    return {
+        "Authorization": "Bearer " + token,
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://chatgpt.com/",
+        "Origin": "https://chatgpt.com",
+        "User-Agent": UA,
+    }
+
+
+def fetch_profile(token):
+    """Best-effort: GET /backend-api/me for name/phone/picture.
+
+    Returns None if it fails — the subscription check must not fail
+    just because the profile call did. Phone is often empty for
+    accounts that never verified one.
+    """
+    try:
+        req = urllib.request.Request(UPSTREAM_ME, headers=upstream_headers(token))
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            me = json.loads(resp.read())
+    except Exception:
+        return None
+    if not isinstance(me, dict):
+        return None
+    return {
+        "name": me.get("name"),
+        "email": me.get("email"),
+        "phone": me.get("phone"),
+        "picture": me.get("picture") or me.get("image"),
+        "mfa": me.get("mfa"),
+    }
+
+
 def sanitise(data):
     accounts = {}
     for acc_id, info in (data.get("accounts") or {}).items():
@@ -32,6 +75,7 @@ def sanitise(data):
             "account": {
                 "plan_type": acct.get("plan_type"),
                 "structure": acct.get("structure"),
+                "name": acct.get("name"),
             },
             "entitlement": {
                 "subscription_plan": ent.get("subscription_plan"),
@@ -79,21 +123,7 @@ class Handler(BaseHTTPRequestHandler):
         if not token or not isinstance(token, str) or not token.startswith("eyJ"):
             self._send(400, {"error": "Missing or invalid accessToken"})
             return
-        req = urllib.request.Request(
-            UPSTREAM,
-            headers={
-                "Authorization": "Bearer " + token,
-                "Accept": "*/*",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Referer": "https://chatgpt.com/",
-                "Origin": "https://chatgpt.com",
-                "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/120.0 Safari/537.36"
-                ),
-            },
-        )
+        req = urllib.request.Request(UPSTREAM, headers=upstream_headers(token))
         try:
             with urllib.request.urlopen(req, timeout=20) as resp:
                 data = json.loads(resp.read())
@@ -106,7 +136,9 @@ class Handler(BaseHTTPRequestHandler):
         except Exception as e:
             self._send(502, {"error": f"Upstream request failed: {e}"})
             return
-        self._send(200, sanitise(data))
+        result = sanitise(data)
+        result["profile"] = fetch_profile(token)
+        self._send(200, result)
 
     def log_message(self, *args):
         # Do not log request bodies / tokens.

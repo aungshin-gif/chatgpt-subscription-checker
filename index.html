@@ -23,6 +23,7 @@
   button:disabled{opacity:.5;cursor:wait}
   #result{display:none}
   .plan{font-size:24px;font-weight:800}
+  .avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;display:none;margin-bottom:8px}
   .badge{display:inline-block;background:#e6f4ea;color:#137333;border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px}
   .badge.free{background:#f1f3f4;color:#5f6368}
   table{width:100%;border-collapse:collapse;margin-top:12px}
@@ -60,11 +61,16 @@
 
   <div class="card" id="result">
     <div><span class="badge" id="statusBadge">Active subscription</span></div>
+    <img class="avatar" id="avatar" alt="">
     <div class="plan" id="planName" style="margin-top:10px">ChatGPT Plus</div>
     <div id="planNote" class="ok-note"></div>
     <table>
+      <tr><td>Name</td><td id="rName">—</td></tr>
       <tr><td>Account</td><td id="rEmail">—</td></tr>
+      <tr><td>Phone</td><td id="rPhone">—</td></tr>
       <tr><td>Plan</td><td id="rPlan">—</td></tr>
+      <tr><td>Plan code</td><td id="rPlanCode">—</td></tr>
+      <tr><td>Account type</td><td id="rType">—</td></tr>
       <tr><td>Active subscription</td><td id="rActive">—</td></tr>
       <tr><td>Expires at</td><td id="rExpires">—</td></tr>
       <tr><td>Renews at</td><td id="rRenews">—</td></tr>
@@ -103,7 +109,7 @@ function planLabel(t, sub){
   if(sub==='chatgptteamplan') return 'ChatGPT Team';
   return t || sub || 'Unknown';
 }
-function render(data, email){
+function render(data, sessionUser){
   const accounts = data.accounts || {};
   const first = Object.values(accounts)[0];
   if(!first){ showError('Account ရှာမတွေ့ဘူး။ Session အသစ်ပြန်ယူကြည့်ပါ။'); return; }
@@ -116,8 +122,21 @@ function render(data, email){
   badge.textContent = active ? 'Active subscription' : 'No active subscription';
   badge.className = 'badge' + (active ? '' : ' free');
   document.getElementById('planNote').textContent = active ? 'Subscription is active with auto-renewal ' + (ent.renews_at ? 'on' : '—') : 'Free account — no paid subscription found.';
-  document.getElementById('rEmail').textContent = email || '—';
+  const profile = data.profile || {};
+  const user = sessionUser || {};
+  const name = profile.name || user.name || '—';
+  const email = profile.email || user.email || '—';
+  const phone = profile.phone || '—';
+  const picture = profile.picture || user.image || user.picture || '';
+  const avatar = document.getElementById('avatar');
+  if(picture){ avatar.src = picture; avatar.style.display = 'block'; } else { avatar.style.display = 'none'; }
+  document.getElementById('rName').textContent = name;
+  document.getElementById('rEmail').textContent = email;
+  document.getElementById('rPhone').textContent = phone;
   document.getElementById('rPlan').textContent = label;
+  document.getElementById('rPlanCode').textContent = ent.subscription_plan || planType || '—';
+  const acctName = first.account && first.account.name ? ' (' + first.account.name + ')' : '';
+  document.getElementById('rType').textContent = (first.account && first.account.structure ? first.account.structure : '—') + acctName;
   document.getElementById('rActive').textContent = active ? 'Yes' : 'No';
   document.getElementById('rExpires').textContent = fmtDate(ent.expires_at);
   document.getElementById('rRenews').textContent = fmtDate(ent.renews_at);
@@ -136,7 +155,7 @@ async function checkSub(){
     catch(e){ showError('JSON မမှန်ဘူး။ chatgpt.com/api/auth/session က JSON အပြည့်ကို copy ခဲ့လား ပြန်စစ်ပါ — အစ { ကနေ အဆုံး } အထိ ပါရမယ်။'); return; }
     const token=session.accessToken;
     if(!token || !token.startsWith('eyJ')){ showError('accessToken ရှာမတွေ့ဘူး။ Session JSON အပြည့်ပဲ paste ပါ — token သီးသန့်မဟုတ်ဘူး။'); return; }
-    const email = session.user && session.user.email ? session.user.email : '';
+    const sessionUser = session.user || {};
     const proxyUrl = proxyInput.value.trim();
     let data;
     if(proxyUrl){
@@ -157,7 +176,7 @@ async function checkSub(){
         return;
       }
     }
-    render(data, email);
+    render(data, sessionUser);
   } finally {
     document.getElementById('session').value='';
     btn.disabled=false; btn.textContent='Check subscription';

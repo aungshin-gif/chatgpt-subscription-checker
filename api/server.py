@@ -42,6 +42,8 @@ GROK_AUTH = Path.home() / ".grok" / "auth.json"
 GROK_SUBS = "https://grok.com/rest/subscriptions"
 GROK_BILLING = "https://cli-chat-proxy.grok.com/v1/billing?format=credits"
 GROK_SESSION = "https://grok.com/api/auth/session"
+GROK_SESSION_REST = "https://grok.com/rest/auth/session"
+GROK_OIDC_DISCOVERY = "https://auth.x.ai/.well-known/openid-configuration"
 
 UPSTREAM = "https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27"
 PORT = int(os.environ.get("PORT", "8787"))
@@ -316,23 +318,44 @@ class Handler(BaseHTTPRequestHandler):
                 profile["email"] = entry["email"]
             if entry.get("user_id"):
                 profile["user_id"] = entry["user_id"]
-        try:
-            req = urllib.request.Request(GROK_SESSION, headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                sess = json.loads(resp.read())
-            s = sess.get("session") if isinstance(sess, dict) else None
-            if isinstance(s, dict):
-                given = s.get("givenName") or ""
-                family = s.get("familyName") or ""
-                name = (given + " " + family).strip()
-                if name:
-                    profile["name"] = name
-                if s.get("email"):
-                    profile["email"] = s["email"]
-                if s.get("xUsername"):
-                    profile["xUsername"] = s["xUsername"]
-        except Exception:
-            pass
+        def _apply_session(s):
+            if not isinstance(s, dict):
+                return
+            given = s.get("givenName") or s.get("given_name") or ""
+            family = s.get("familyName") or s.get("family_name") or ""
+            name = (given + " " + family).strip() or s.get("name") or ""
+            if name:
+                profile["name"] = name
+            if s.get("email"):
+                profile["email"] = s["email"]
+            if s.get("xUsername"):
+                profile["xUsername"] = s["xUsername"]
+
+        # (a) grok.com session endpoints with the Bearer token.
+        for url in (GROK_SESSION, GROK_SESSION_REST):
+            if profile.get("name"):
+                break
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    sess = json.loads(resp.read())
+                if isinstance(sess, dict):
+                    _apply_session(sess.get("session") or sess)
+            except Exception:
+                pass
+        # (b) OIDC userinfo via the issuer's discovery document.
+        if not profile.get("name"):
+            try:
+                req = urllib.request.Request(GROK_OIDC_DISCOVERY, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    disc = json.loads(resp.read())
+                userinfo_url = disc.get("userinfo_endpoint") if isinstance(disc, dict) else None
+                if userinfo_url:
+                    req = urllib.request.Request(userinfo_url, headers=headers)
+                    with urllib.request.urlopen(req, timeout=10) as resp:
+                        _apply_session(json.loads(resp.read()))
+            except Exception:
+                pass
         # Weekly usage — best-effort, never fails the check.
         billing = {}
         billing_keys = []
@@ -379,6 +402,7 @@ class Handler(BaseHTTPRequestHandler):
                 "subsKeys": subs_keys,
                 "firstItemKeys": first_keys,
                 "billingKeys": billing_keys,
+                "authKeys": list(entry.keys()) if isinstance(entry, dict) else [],
             }
         self._send(200, result)
 

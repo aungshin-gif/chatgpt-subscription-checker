@@ -26,7 +26,8 @@
   .mini-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #1a1a2e;background:#f1f3f4}
   .topbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .brand{display:flex;gap:14px;align-items:center}
-  .logo-img{width:48px;height:48px;flex:none;background:#fff;border:3px solid #1a1a2e;border-radius:16px;padding:4px;box-shadow:4px 4px 0 #1a1a2e}
+  .logo-img{width:48px;height:48px;flex:none;background:#fff;border:3px solid #1a1a2e;border-radius:16px;padding:4px;box-shadow:4px 4px 0 #1a1a2e;display:block}
+  .logo-img svg{width:100%;height:100%;display:block}
   .ico{width:18px;height:18px;vertical-align:-4px;margin-right:6px;color:#1a1a2e}
   td:first-child{white-space:nowrap}
   button{border:3px solid #1a1a2e;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e}
@@ -60,8 +61,7 @@
 <body>
 <header>
   <div class="brand">
-    <img class="logo-img" src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" alt="ChatGPT" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block'">
-    <svg class="logo-img" id="logoFallback" style="display:none" viewBox="0 0 100 100" aria-hidden="true"><g fill="#1a1a2e"><path d="M50 6c7 12 7 24 0 34-7-10-7-22 0-34z"/><path d="M50 6c7 12 7 24 0 34-7-10-7-22 0-34z" transform="rotate(60 50 50)"/><path d="M50 6c7 12 7 24 0 34-7-10-7-22 0-34z" transform="rotate(120 50 50)"/><path d="M50 6c7 12 7 24 0 34-7-10-7-22 0-34z" transform="rotate(180 50 50)"/><path d="M50 6c7 12 7 24 0 34-7-10-7-22 0-34z" transform="rotate(240 50 50)"/><path d="M50 6c7 12 7 24 0 34-7-10-7-22 0-34z" transform="rotate(300 50 50)"/></g><circle cx="50" cy="50" r="12" fill="#faf7f0"/></svg>
+    <span class="logo-img"><svg viewBox="0 0 2406 2406" aria-hidden="true"><path id="cgk" d="M1107.3 299.1c-197.999 0-373.9 127.3-435.2 315.3L650 743.5v427.9c0 21.4 11 40.4 29.4 51.4l344.5 198.515V833.3h.1v-27.9L1372.7 604c33.715-19.52 70.44-32.857 108.47-39.828L1447.6 450.3C1361 353.5 1237.1 298.5 1107.3 299.1zm0 117.5-.6.6c79.699 0 156.3 27.5 217.6 78.4-2.5 1.2-7.4 4.3-11 6.1L952.8 709.3c-18.4 10.4-29.4 30-29.4 51.4V1248l-155.1-89.4V755.8c-.1-187.099 151.601-338.9 339-339.2z" fill="#1a1a2e"/><use href="#cgk" transform="rotate(60 1203 1203)"/><use href="#cgk" transform="rotate(120 1203 1203)"/><use href="#cgk" transform="rotate(180 1203 1203)"/><use href="#cgk" transform="rotate(240 1203 1203)"/><use href="#cgk" transform="rotate(300 1203 1203)"/></svg></span>
     <div>
       <h1>ChatGPT Subscription Checker</h1>
       <p class="sub">Session JSON paste လုပ် → Plus / Pro / Free, သက်တမ်းကုန်ရက်, auto-renewal စစ်မယ်။</p>

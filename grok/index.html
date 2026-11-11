@@ -71,6 +71,8 @@
     <div class="plan" id="planName" style="margin-top:10px">SuperGrok</div>
     <div id="planNote" class="ok-note"></div>
     <table>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Name</td><td id="rName">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>Account</td><td id="rEmail">—</td></tr>
       <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Plan</td><td id="rPlan">—</td></tr>
       <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>Active subscription</td><td id="rActive">—</td></tr>
       <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Active offer</td><td id="rOffer">—</td></tr>
@@ -117,6 +119,9 @@ function render(data){
   badge.textContent = active ? 'Active subscription' : 'No active subscription';
   badge.className = 'badge' + (active ? '' : ' free');
   document.getElementById('planNote').textContent = active ? 'Subscription is active.' : 'No active Grok subscription found for this login.';
+  const prof = data.profile || {};
+  document.getElementById('rName').textContent = prof.name || '—';
+  document.getElementById('rEmail').textContent = prof.email || '—';
   document.getElementById('rPlan').textContent = tier;
   document.getElementById('rActive').textContent = active ? 'Yes' : 'No';
   document.getElementById('rOffer').textContent = data.offer || '—';

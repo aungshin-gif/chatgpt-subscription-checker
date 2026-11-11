@@ -96,13 +96,14 @@ const GROK_CHECK_URL = location.hostname.endsWith('github.io')
 function showError(msg){ const e=document.getElementById('error'); e.style.display='block'; e.textContent=msg; document.getElementById('result').style.display='none'; }
 function clearError(){ document.getElementById('error').style.display='none'; }
 
+function fmtDate(s){ if(!s) return ''; const d=new Date(s); return isNaN(d) ? s : d.toLocaleString('en-GB',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).replace(',',''); }
 function fmtPeriod(p){
   if(!p) return '—';
-  if(typeof p === 'string') return p;
+  if(typeof p === 'string') return fmtDate(p) || p;
   if(typeof p === 'object'){
     const s = p.start || p.startTime || p.periodStart || '';
     const e = p.end || p.endTime || p.periodEnd || '';
-    if(s || e) return (s || '—') + ' → ' + (e || '—');
+    if(s || e) return (fmtDate(s) || '—') + ' → ' + (fmtDate(e) || '—');
     return '—';
   }
   return String(p);
@@ -120,8 +121,13 @@ function render(data){
   document.getElementById('rActive').textContent = active ? 'Yes' : 'No';
   document.getElementById('rOffer').textContent = data.offer || '—';
   const b = data.billing || {};
-  document.getElementById('rUsage').textContent =
-    (b.creditUsagePercent === undefined || b.creditUsagePercent === null) ? '—' : b.creditUsagePercent + '% used';
+  let usage = '—';
+  if(b.creditUsagePercent !== undefined && b.creditUsagePercent !== null) usage = b.creditUsagePercent + '% used';
+  else if(typeof b.onDemandUsed === 'number' && typeof b.onDemandCap === 'number' && b.onDemandCap > 0)
+    usage = Math.round(b.onDemandUsed / b.onDemandCap * 100) + '% used (' + b.onDemandUsed + ' / ' + b.onDemandCap + ')';
+  else if(b.onDemandUsed !== undefined && b.onDemandUsed !== null)
+    usage = 'Used: ' + b.onDemandUsed + ((b.onDemandCap !== undefined && b.onDemandCap !== null) ? ' / Cap: ' + b.onDemandCap : '');
+  document.getElementById('rUsage').textContent = usage;
   document.getElementById('rPeriod').textContent = fmtPeriod(b.currentPeriod);
   document.getElementById('rBalance').textContent =
     (b.prepaidBalance === undefined || b.prepaidBalance === null) ? '—' : String(b.prepaidBalance);

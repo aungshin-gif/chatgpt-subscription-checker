@@ -9,6 +9,11 @@ POST /check  {"accessToken": "eyJ..."}
   -> calls https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27
   -> returns only the sanitised subscription fields.
 
+GET /checker  serves the checker page (index.html from the repo root),
+  so the page itself comes from this VPS. The browser then calls the
+  relative path /check on the same origin — it never sees the upstream
+  endpoint, which lives only in this file on the server.
+
 The accessToken is used for one upstream call and never logged or stored.
 Use behind Caddy/Nginx with HTTPS in production; do not expose plain HTTP
 to the public internet.
@@ -17,7 +22,10 @@ import json
 import os
 import urllib.request
 import urllib.error
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+INDEX = Path(__file__).resolve().parent.parent / "index.html"
 
 UPSTREAM = "https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27"
 PORT = int(os.environ.get("PORT", "8787"))
@@ -103,8 +111,23 @@ class Handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self._send(204, {})
 
+    def _send_html(self):
+        try:
+            body = INDEX.read_bytes()
+        except Exception:
+            self._send(404, {"error": "checker page not found on server"})
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_GET(self):
-        if self.path in ("/", "/health"):
+        path = self.path.split("?", 1)[0]
+        if path in ("/checker", "/checker/"):
+            self._send_html()
+        elif path in ("/", "/health"):
             self._send(200, {"ok": True, "service": "chatgpt-subscription-checker"})
         else:
             self._send(404, {"error": "not found"})

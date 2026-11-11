@@ -318,6 +318,11 @@ class Handler(BaseHTTPRequestHandler):
                 profile["email"] = entry["email"]
             if entry.get("user_id"):
                 profile["user_id"] = entry["user_id"]
+            # auth.json itself carries first/last name — most reliable source.
+            fn = (entry.get("first_name") or "").strip()
+            ln = (entry.get("last_name") or "").strip()
+            if fn or ln:
+                profile["name"] = (fn + " " + ln).strip()
         def _apply_session(s):
             if not isinstance(s, dict):
                 return

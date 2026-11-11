@@ -293,6 +293,7 @@ class Handler(BaseHTTPRequestHandler):
         tier, active, offer_id = grok_tier(subs)
         # Weekly usage — best-effort, never fails the check.
         billing = {}
+        billing_keys = []
         try:
             bheaders = dict(headers)
             bheaders["X-XAI-Token-Auth"] = "xai-grok-cli"
@@ -301,6 +302,7 @@ class Handler(BaseHTTPRequestHandler):
                 raw = json.loads(resp.read())
             cfg = raw.get("config") if isinstance(raw, dict) else None
             src = cfg if isinstance(cfg, dict) else (raw if isinstance(raw, dict) else {})
+            billing_keys = list(src.keys()) if isinstance(src, dict) else []
             billing = {
                 "creditUsagePercent": src.get("creditUsagePercent"),
                 "currentPeriod": src.get("currentPeriod"),
@@ -308,12 +310,32 @@ class Handler(BaseHTTPRequestHandler):
             }
         except Exception:
             billing = {}
-        self._send(200, {
+        result = {
             "tier": tier,
             "active": active,
             "offer": offer_id,
             "billing": billing,
-        })
+        }
+        # Debug aid only: field NAMES (never values) so a missed response
+        # shape can be fixed without exposing account data.
+        if not active:
+            subs_keys = list(subs.keys()) if isinstance(subs, dict) else []
+            first_keys = []
+            items = []
+            if isinstance(subs, dict):
+                raw_items = subs.get("subscriptions") or subs.get("items") or []
+                if isinstance(raw_items, list):
+                    items = raw_items
+            elif isinstance(subs, list):
+                items = subs
+            if items and isinstance(items[0], dict):
+                first_keys = list(items[0].keys())
+            result["debug"] = {
+                "subsKeys": subs_keys,
+                "firstItemKeys": first_keys,
+                "billingKeys": billing_keys,
+            }
+        self._send(200, result)
 
     def log_message(self, *args):
         # Do not log request bodies / tokens.

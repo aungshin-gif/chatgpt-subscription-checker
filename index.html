@@ -17,9 +17,10 @@
   .card{background:#fffdf8;border:3px solid #1a1a2e;border-radius:24px;padding:20px;margin:16px 0;box-shadow:8px 8px 0 #1a1a2e,inset 0 2px 0 rgba(255,255,255,.9),inset 0 -6px 12px rgba(0,0,0,.04)}
   .cat{display:flex;gap:16px;align-items:center;cursor:pointer;text-decoration:none;color:#1a1a2e}
   .cat:active{transform:translate(4px,4px);box-shadow:4px 4px 0 #1a1a2e}
-  .cat-logo{width:56px;height:56px;flex:none;background:#fff;border:3px solid #1a1a2e;border-radius:18px;padding:5px;box-shadow:4px 4px 0 #1a1a2e}
-  .cat-logo img{width:100%;height:100%;display:block}
-  .grok-badge{width:56px;height:56px;flex:none;background:#1a1a2e;color:#fff;border:3px solid #1a1a2e;border-radius:18px;box-shadow:4px 4px 0 #1a1a2e;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800}
+  .cat-logo{width:56px;height:56px;flex:none;background:#fff;border:3px solid #1a1a2e;border-radius:18px;padding:5px;box-shadow:4px 4px 0 #1a1a2e;display:block}
+  .cat-logo svg{width:100%;height:100%;display:block}
+  .grok-badge{width:56px;height:56px;flex:none;background:#1a1a2e;border:3px solid #1a1a2e;border-radius:18px;padding:7px;box-shadow:4px 4px 0 #1a1a2e;display:block}
+  .grok-badge svg{width:100%;height:100%;display:block}
   .cat h2{margin:0;font-size:22px}
   .cat p{margin:2px 0 0;color:#555;font-size:14px}
   .cat .arrow{margin-left:auto;font-size:24px;font-weight:800}
@@ -35,7 +36,7 @@
 </header>
 <main>
   <a class="card cat" id="linkChatgpt" href="chatgpt/">
-    <span class="cat-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" alt="ChatGPT" onerror="this.style.display='none'"></span>
+    <span class="cat-logo"><svg viewBox="0 0 2406 2406" aria-hidden="true"><path id="cgk" d="M1107.3 299.1c-197.999 0-373.9 127.3-435.2 315.3L650 743.5v427.9c0 21.4 11 40.4 29.4 51.4l344.5 198.515V833.3h.1v-27.9L1372.7 604c33.715-19.52 70.44-32.857 108.47-39.828L1447.6 450.3C1361 353.5 1237.1 298.5 1107.3 299.1zm0 117.5-.6.6c79.699 0 156.3 27.5 217.6 78.4-2.5 1.2-7.4 4.3-11 6.1L952.8 709.3c-18.4 10.4-29.4 30-29.4 51.4V1248l-155.1-89.4V755.8c-.1-187.099 151.601-338.9 339-339.2z" fill="#1a1a2e"/><use href="#cgk" transform="rotate(60 1203 1203)"/><use href="#cgk" transform="rotate(120 1203 1203)"/><use href="#cgk" transform="rotate(180 1203 1203)"/><use href="#cgk" transform="rotate(240 1203 1203)"/><use href="#cgk" transform="rotate(300 1203 1203)"/></svg></span>
     <span>
       <h2>ChatGPT</h2>
       <p>Plus / Pro / Free — Session paste လုပ်ပြီး စစ်မယ်။</p>
@@ -44,7 +45,7 @@
   </a>
 
   <a class="card cat" id="linkGrok" href="grok/">
-    <span class="grok-badge">G</span>
+    <span class="grok-badge"><svg viewBox="0 0 34 33" aria-hidden="true"><path d="M13.2371 21.0407L24.3186 12.8506C24.8619 12.4491 25.6384 12.6057 25.8973 13.2294C27.2597 16.5185 26.651 20.4712 23.9403 23.1851C21.2297 25.8989 17.4581 26.4941 14.0108 25.1386L10.2449 26.8843C15.6463 30.5806 22.2053 29.6665 26.304 25.5601C29.5551 22.3051 30.562 17.8683 29.6205 13.8673L29.629 13.8758C28.2637 7.99809 29.9647 5.64871 33.449 0.844576C33.5314 0.730667 33.6139 0.616757 33.6964 0.5L29.1113 5.09055V5.07631L13.2343 21.0436" fill="#fff"/><path d="M10.9503 23.0313C7.07343 19.3235 7.74185 13.5853 11.0498 10.2763C13.4959 7.82722 17.5036 6.82767 21.0021 8.2971L24.7595 6.55998C24.0826 6.07017 23.215 5.54334 22.2195 5.17313C17.7198 3.31926 12.3326 4.24192 8.67479 7.90126C5.15635 11.4239 4.0499 16.8403 5.94992 21.4622C7.36924 24.9165 5.04257 27.3598 2.69884 29.826C1.86829 30.7002 1.0349 31.5745 0.36364 32.5L10.9474 23.0341" fill="#fff"/></svg></span>
     <span>
       <h2>Grok</h2>
       <p>SuperGrok / Heavy — Login တစ်ခါပဲ, ပြီးရင် Check နှိပ်ရုံပဲ။</p>

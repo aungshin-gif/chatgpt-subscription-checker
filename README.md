@@ -1,59 +1,71 @@
-# ChatGPT Subscription Checker
+# Star Checking
 
-Paste a ChatGPT Session JSON → check Plus / Pro / Free, expiry date and auto-renewal — like duihuan.us/chatgpt-subscription, on your own site.
+Subscription checkers in one place — pick a category, check the plan.
 
-**Unofficial:** there is no official OpenAI API for this. This uses ChatGPT's own internal endpoint, the same one the web app uses:
+- **ChatGPT** — paste Session JSON, check Plus / Pro / Free, expiry, auto-renewal.
+- **Grok** — no paste needed. The VPS holds the login (one-time `grok login`),
+  open the page and tap Check: SuperGrok tier + weekly usage %.
 
-```
-GET https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27
-Authorization: Bearer <accessToken from chatgpt.com/api/auth/session>
-```
+Unofficial tools — not affiliated with OpenAI or xAI.
 
-Response fields used: `account.plan_type`, `entitlement.subscription_plan`, `entitlement.has_active_subscription`, `entitlement.expires_at`, `entitlement.renews_at`, `entitlement.billing_period`.
+## Pages
 
-## Files
+| Page | GitHub Pages | VPS |
+|---|---|---|
+| Hub (Star Checking) | `https://<user>.github.io/chatgpt-subscription-checker/` | `https://redeem.gamepayhub.shop/star` |
+| ChatGPT checker | `…/chatgpt-subscription-checker/chatgpt/` | `https://redeem.gamepayhub.shop/checker` |
+| Grok checker | `…/chatgpt-subscription-checker/grok/` | `https://redeem.gamepayhub.shop/grok` |
 
-| File | What it is |
-|---|---|
-| `index.html` | The checker page (Burmese UI). Single file, no build step. |
-| `worker.js` | Cloudflare Worker proxy — recommended. Free tier is enough. |
-| `api/server.py` | Python proxy (stdlib only) for your own VPS. Alternative to the Worker. |
-| `.github/workflows/pages.yml` | Deploys `index.html` to GitHub Pages on every push to `main`. |
+## How it works
 
-## Why a proxy is needed
+No official APIs. Both checkers use the services' own internal endpoints
+through a small Python proxy (`api/server.py`, stdlib only, ~15 MB RAM).
 
-`chatgpt.com` blocks direct `fetch` from other domains with CORS (no `Access-Control-Allow-Origin` header for other origins). So the browser page alone cannot call the endpoint — the call must go through your own server/Worker, which is not bound by CORS.
+- ChatGPT: `GET chatgpt.com/backend-api/accounts/check/v4-2023-04-27`
+  with the `accessToken` from `chatgpt.com/api/auth/session`.
+  Direct browser fetch is CORS-blocked, so the proxy is required.
+- Grok: `GET grok.com/rest/subscriptions` (plan tier) and
+  `GET cli-chat-proxy.grok.com/v1/billing?format=credits` (weekly usage %),
+  with the xAI OAuth token from `~/.grok/auth.json`.
+  The Grok session JSON from `grok.com/api/auth/session` carries identity
+  only — no token — so pasting it cannot work; the token must come from login.
 
-## Deploy in 2 steps (5 minutes)
-
-### Step 1 — Proxy (Cloudflare Worker, free)
-
-1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → Workers & Pages → Create → paste `worker.js` → Deploy.
-2. Copy the Worker URL, e.g. `https://chatgpt-checker.xxx.workers.dev` — the check endpoint is that URL + `/check`.
-3. Open your checker page, paste that full URL into the **Proxy URL** box. It is saved in your browser only.
-
-### Step 2 — Page (GitHub Pages, automatic)
-
-1. Push this repo to GitHub.
-2. Settings → Pages → Source: GitHub Actions. The workflow in this repo deploys `index.html` automatically.
-3. Open `https://<username>.github.io/chatgpt-subscription-checker/`.
-
-Alternative proxy on your VPS instead of Cloudflare:
+## VPS setup
 
 ```bash
-python3 api/server.py   # POST /check on port 8787, put Caddy/Nginx + HTTPS in front
+# 1. Get the code and run the proxy (port 8787)
+git clone https://github.com/aungshin-gif/chatgpt-subscription-checker.git
+cd chatgpt-subscription-checker
+nohup python3 api/server.py > proxy.log 2>&1 &
+
+# 2. One-time Grok login (device flow for SSH — no browser on the server)
+curl -fsSL https://x.ai/cli/install.sh | bash
+grok --version
+grok login --device-auth   # open the printed URL on your phone and approve
 ```
 
-## How a customer checks
+## Caddy (example)
 
-1. Log in to ChatGPT in their browser.
-2. Open `chatgpt.com/api/auth/session`, copy the whole JSON.
-3. Paste it on the checker page → Check subscription.
-4. Result shows plan, active yes/no, expires at, renews at, auto-renewal, billing period, days left.
+```caddy
+redeem.gamepayhub.shop {
+    handle /check {
+        reverse_proxy 127.0.0.1:8787
+    }
+    handle /checker* {
+        reverse_proxy 127.0.0.1:8787
+    }
+    handle /grok* {
+        reverse_proxy 127.0.0.1:8787
+    }
+    handle /star* {
+        reverse_proxy 127.0.0.1:8787
+    }
+    reverse_proxy 127.0.0.1:3000
+}
+```
 
-## Security — read this
+Then `caddy validate --config /etc/caddy/Caddyfile && systemctl reload caddy`.
 
-- A Session JSON **is a login credential** (like a password). This site never saves it, never logs it, and clears the input right after the check. The proxy returns only the subscription fields, nothing else.
-- Do not paste a Session into chat, screenshots or public issues.
-- If a check returns 401, the session expired — get a fresh one.
-- OpenAI can change or block this internal endpoint at any time; it is not a stable public API.
+Tokens: the Grok token lives only in `~/.grok/auth.json` on the VPS
+(0600, owner-only) and is never sent to the browser. ChatGPT Session JSON
+is a login credential — the checker clears it after each check; never share it.

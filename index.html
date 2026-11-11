@@ -104,11 +104,14 @@
 <footer>Unofficial checker — OpenAI နဲ့ မသက်ဆိုင်ပါ။</footer>
 
 <script>
-// Proxy URL is built into the page on purpose — it is not shown in the UI,
-// so visitors do not see or copy it. (It is still visible in page source /
-// network requests, as with any browser-called URL — it cannot be fully
-// hidden from someone who inspects the page.)
-const DEFAULT_PROXY_URL = 'https://redeem.gamepayhub.shop/check';
+// Which proxy to call:
+// - Page served by the VPS itself (/checker): relative '/check' on the same
+//   origin — the browser never sees any other URL or the upstream endpoint.
+// - Page on GitHub Pages: the absolute VPS proxy URL (same domain as the
+//   VPS-served page, so it reveals nothing extra).
+const DEFAULT_PROXY_URL = location.hostname.endsWith('github.io')
+  ? 'https://redeem.gamepayhub.shop/check'
+  : '/check';
 const proxyUrl = (localStorage.getItem('cg_proxy_url') || '').trim() || DEFAULT_PROXY_URL;
 
 async function copySessionUrl(){

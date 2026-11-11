@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="my">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grok Subscription Checker — Star Checking</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  button,.mini-btn{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  button:focus,.mini-btn:focus{outline:none}
+  button:focus-visible,.mini-btn:focus-visible{outline:3px solid #1a1a2e;outline-offset:2px}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#faf7f0;color:#1a1a2e;line-height:1.6}
+  header{padding:28px 18px 10px;max-width:760px;margin:0 auto}
+  h1{margin:0 0 4px;font-size:26px}
+  p.sub{margin:0;color:#555}
+  main{max-width:760px;margin:0 auto;padding:10px 18px 40px}
+  .card{background:#fffdf8;border:3px solid #1a1a2e;border-radius:24px;padding:20px;margin:16px 0;box-shadow:8px 8px 0 #1a1a2e,inset 0 2px 0 rgba(255,255,255,.9),inset 0 -6px 12px rgba(0,0,0,.04)}
+  label{font-weight:700;display:block;margin:0 0 8px}
+  .hint{font-size:13px;color:#666;margin:8px 0 0}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .label-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .label-row label{margin:0}
+  .mini-btn{border:2px solid #1a1a2e;background:#fff;border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;cursor:pointer;color:#1a1a2e;box-shadow:3px 3px 0 #1a1a2e;text-decoration:none;display:inline-block}
+  .mini-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #1a1a2e;background:#f1f3f4}
+  .topbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .brand{display:flex;gap:14px;align-items:center}
+  .logo-img{width:48px;height:48px;flex:none;background:#fff;border:3px solid #1a1a2e;border-radius:16px;padding:4px;box-shadow:4px 4px 0 #1a1a2e}
+  .grok-badge{width:48px;height:48px;flex:none;background:#1a1a2e;color:#fff;border:3px solid #1a1a2e;border-radius:16px;box-shadow:4px 4px 0 #1a1a2e;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800}
+  .ico{width:18px;height:18px;vertical-align:-4px;margin-right:6px;color:#1a1a2e}
+  td:first-child{white-space:nowrap}
+  button{border:3px solid #1a1a2e;border-radius:999px;padding:13px 24px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e}
+  button:active{transform:translate(4px,4px);box-shadow:0 0 0 #1a1a2e}
+  button.primary{background:#1a1a2e;color:#fff}
+  button:disabled{opacity:.5;cursor:wait}
+  #result{display:none}
+  .plan{font-size:24px;font-weight:800}
+  .badge{display:inline-block;background:#e6f4ea;color:#137333;border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px}
+  .badge.free{background:#f1f3f4;color:#5f6368}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  td{padding:10px 4px;border-bottom:1px solid #eee}
+  td:last-child{text-align:right;font-weight:700}
+  .err{background:#fce8e6;border:1px solid #f5c6cb;color:#a50e0e;border-radius:12px;padding:14px;display:none;white-space:pre-wrap}
+  .ok-note{font-size:13px;color:#137333}
+  .dev-badge{display:inline-block;border:2px solid #1a1a2e;border-radius:999px;padding:4px 14px;font-weight:800;background:#fff;box-shadow:3px 3px 0 #1a1a2e;color:#1a1a2e}
+  footer{max-width:760px;margin:0 auto;padding:0 18px 30px;color:#777;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="grok-badge">G</div>
+    <div>
+      <h1>Grok Subscription Checker</h1>
+      <p class="sub">Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။</p>
+    </div>
+  </div>
+  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a></div>
+</header>
+<main>
+  <div class="card">
+    <label>SuperGrok / Heavy — Plan + တစ်ပတ်စာ usage</label>
+    <p class="hint">Token က VPS ပေါ်မှာ သိမ်းထားပြီးသား (`grok login` တစ်ခါ) — ဒီ page ကနေ ဘာမှ paste လုပ်စရာ မလို, token ကို ဘယ်နေရာမှ မပြဘူး။</p>
+    <div class="row">
+      <button class="primary" id="checkBtn" onclick="checkGrok()">Check subscription</button>
+    </div>
+    <div class="err" id="error"></div>
+  </div>
+
+  <div class="card" id="result">
+    <div><span class="badge" id="statusBadge">Active subscription</span></div>
+    <div class="plan" id="planName" style="margin-top:10px">SuperGrok</div>
+    <div id="planNote" class="ok-note"></div>
+    <table>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Plan</td><td id="rPlan">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>Active subscription</td><td id="rActive">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Active offer</td><td id="rOffer">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Weekly usage</td><td id="rUsage">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Current period</td><td id="rPeriod">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Prepaid balance</td><td id="rBalance">—</td></tr>
+    </table>
+  </div>
+</main>
+<footer>Unofficial checker — xAI နဲ့ မသက်ဆိုင်ပါ။<br><br><span class="dev-badge">Developed by Diameter X</span></footer>
+
+<script>
+// Hub link: Pages serves the hub at the repo root ('../' from /grok/),
+// the VPS serves it at /star.
+const backLink=document.getElementById('backLink');
+if(backLink) backLink.href = location.hostname.endsWith('github.io') ? '../' : '/star';
+
+// Check endpoint: relative on the VPS, absolute on GitHub Pages.
+const GROK_CHECK_URL = location.hostname.endsWith('github.io')
+  ? 'https://redeem.gamepayhub.shop/grok-check'
+  : '/grok-check';
+
+function showError(msg){ const e=document.getElementById('error'); e.style.display='block'; e.textContent=msg; document.getElementById('result').style.display='none'; }
+function clearError(){ document.getElementById('error').style.display='none'; }
+
+function fmtPeriod(p){
+  if(!p) return '—';
+  if(typeof p === 'string') return p;
+  if(typeof p === 'object'){
+    const s = p.start || p.startTime || p.periodStart || '';
+    const e = p.end || p.endTime || p.periodEnd || '';
+    if(s || e) return (s || '—') + ' → ' + (e || '—');
+    return '—';
+  }
+  return String(p);
+}
+
+function render(data){
+  const tier = data.tier || 'Unknown';
+  document.getElementById('planName').textContent = tier;
+  const active = !!data.active;
+  const badge = document.getElementById('statusBadge');
+  badge.textContent = active ? 'Active subscription' : 'No active subscription';
+  badge.className = 'badge' + (active ? '' : ' free');
+  document.getElementById('planNote').textContent = active ? 'Subscription is active.' : 'No active Grok subscription found for this login.';
+  document.getElementById('rPlan').textContent = tier;
+  document.getElementById('rActive').textContent = active ? 'Yes' : 'No';
+  document.getElementById('rOffer').textContent = data.offer || '—';
+  const b = data.billing || {};
+  document.getElementById('rUsage').textContent =
+    (b.creditUsagePercent === undefined || b.creditUsagePercent === null) ? '—' : b.creditUsagePercent + '% used';
+  document.getElementById('rPeriod').textContent = fmtPeriod(b.currentPeriod);
+  document.getElementById('rBalance').textContent =
+    (b.prepaidBalance === undefined || b.prepaidBalance === null) ? '—' : String(b.prepaidBalance);
+  document.getElementById('result').style.display='block';
+}
+
+async function checkGrok(){
+  clearError();
+  const btn=document.getElementById('checkBtn'); btn.disabled=true; btn.textContent='Checking…';
+  try{
+    const r=await fetch(GROK_CHECK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const text=await r.text();
+    let data;
+    try{ data=JSON.parse(text); }catch(e){ showError('Proxy က JSON မပြန်ဘူး: ' + text.slice(0,200)); return; }
+    if(!r.ok){ showError(data.error || ('Proxy error ('+r.status+')')); return; }
+    render(data);
+  }catch(e){
+    showError('Check လုပ်လို့ မရဘူး — ခဏနေပြန်စမ်းပါ။');
+  }finally{
+    btn.disabled=false; btn.textContent='Check subscription';
+  }
+}
+</script>
+</body>
+</html>

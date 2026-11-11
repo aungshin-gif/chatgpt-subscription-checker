@@ -137,6 +137,13 @@ def get_grok_token():
     return None
 
 
+def _val(x):
+    """Unwrap the API's {val: N} number wrappers."""
+    if isinstance(x, dict) and "val" in x:
+        return x["val"]
+    return x
+
+
 def grok_tier(subs):
     """Pick the active subscription and map it to a tier name.
 
@@ -164,7 +171,8 @@ def grok_tier(subs):
     if active_item is None and items:
         active_item = items[0] if isinstance(items[0], dict) else None
     if not active_item:
-        return "Unknown", False, None
+        # No subscriptions at all: the account is on the Free tier.
+        return "Free", False, None
     offer = active_item.get("activeOffer") or {}
     offer_id = str(
         (offer.get("providerOfferId") if isinstance(offer, dict) else None)
@@ -304,9 +312,11 @@ class Handler(BaseHTTPRequestHandler):
             src = cfg if isinstance(cfg, dict) else (raw if isinstance(raw, dict) else {})
             billing_keys = list(src.keys()) if isinstance(src, dict) else []
             billing = {
-                "creditUsagePercent": src.get("creditUsagePercent"),
+                "creditUsagePercent": _val(src.get("creditUsagePercent")),
+                "onDemandUsed": _val(src.get("onDemandUsed")),
+                "onDemandCap": _val(src.get("onDemandCap")),
                 "currentPeriod": src.get("currentPeriod"),
-                "prepaidBalance": src.get("prepaidBalance"),
+                "prepaidBalance": _val(src.get("prepaidBalance")),
             }
         except Exception:
             billing = {}

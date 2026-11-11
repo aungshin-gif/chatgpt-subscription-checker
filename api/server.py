@@ -41,6 +41,7 @@ GROK_AUTH = Path.home() / ".grok" / "auth.json"
 
 GROK_SUBS = "https://grok.com/rest/subscriptions"
 GROK_BILLING = "https://cli-chat-proxy.grok.com/v1/billing?format=credits"
+GROK_SESSION = "https://grok.com/api/auth/session"
 
 UPSTREAM = "https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27"
 PORT = int(os.environ.get("PORT", "8787"))
@@ -111,12 +112,12 @@ def sanitise(data):
     return {"accounts": accounts}
 
 
-def get_grok_token():
-    """Read the xAI OAuth Bearer token from ~/.grok/auth.json.
+def get_grok_auth_entry():
+    """Return the chosen credential object from ~/.grok/auth.json.
 
     The file is a map scope -> credential object; prefer the
-    auth.x.ai OIDC entry (auth_mode web_login). Returns the `key`
-    string, or None when no login exists yet.
+    auth.x.ai OIDC entry (auth_mode web_login). Returns the dict,
+    or None when no login exists yet.
     """
     try:
         store = json.loads(GROK_AUTH.read_text())
@@ -127,14 +128,20 @@ def get_grok_token():
     cands = list(store.values())
     for c in cands:
         if isinstance(c, dict) and c.get("auth_mode") == "web_login" and c.get("key"):
-            return c["key"]
+            return c
     for scope, c in store.items():
         if isinstance(c, dict) and "auth.x.ai" in scope and c.get("key"):
-            return c["key"]
+            return c
     for c in cands:
         if isinstance(c, dict) and c.get("key"):
-            return c["key"]
+            return c
     return None
+
+
+def get_grok_token():
+    """Read the xAI OAuth Bearer token from ~/.grok/auth.json."""
+    entry = get_grok_auth_entry()
+    return entry.get("key") if entry else None
 
 
 def _val(x):
@@ -299,6 +306,33 @@ class Handler(BaseHTTPRequestHandler):
             self._send(502, {"error": f"Grok request failed: {e}"})
             return
         tier, active, offer_id = grok_tier(subs)
+        # Profile (Name / email) — best-effort, never fails the check.
+        # First from auth.json itself, then try the session endpoint
+        # with the same Bearer token (works only if it accepts it).
+        profile = {}
+        entry = get_grok_auth_entry()
+        if entry:
+            if entry.get("email"):
+                profile["email"] = entry["email"]
+            if entry.get("user_id"):
+                profile["user_id"] = entry["user_id"]
+        try:
+            req = urllib.request.Request(GROK_SESSION, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                sess = json.loads(resp.read())
+            s = sess.get("session") if isinstance(sess, dict) else None
+            if isinstance(s, dict):
+                given = s.get("givenName") or ""
+                family = s.get("familyName") or ""
+                name = (given + " " + family).strip()
+                if name:
+                    profile["name"] = name
+                if s.get("email"):
+                    profile["email"] = s["email"]
+                if s.get("xUsername"):
+                    profile["xUsername"] = s["xUsername"]
+        except Exception:
+            pass
         # Weekly usage — best-effort, never fails the check.
         billing = {}
         billing_keys = []
@@ -325,6 +359,7 @@ class Handler(BaseHTTPRequestHandler):
             "active": active,
             "offer": offer_id,
             "billing": billing,
+            "profile": profile,
         }
         # Debug aid only: field NAMES (never values) so a missed response
         # shape can be fixed without exposing account data.

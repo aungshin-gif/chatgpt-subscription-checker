@@ -56,6 +56,13 @@
   ol{padding-left:20px}
   code{background:#f1f3f4;padding:2px 6px;border-radius:6px;font-size:13px}
   footer{max-width:760px;margin:0 auto;padding:0 18px 30px;color:#777;font-size:13px}
+  .lang-wrap{position:relative}
+  .lang-popup{position:absolute;right:0;top:calc(100% + 8px);background:#fffdf8;border:3px solid #1a1a2e;border-radius:16px;box-shadow:6px 6px 0 #1a1a2e;padding:6px;display:none;z-index:50;min-width:210px}
+  .lang-popup.open{display:block}
+  .lang-opt{display:block;width:100%;text-align:left;background:transparent;border:none;border-radius:10px;padding:10px 12px;font-size:15px;font-weight:700;color:#1a1a2e;cursor:pointer;box-shadow:none}
+  .lang-opt:hover{background:#faf7f0}
+  .lang-opt.active{background:#1a1a2e;color:#fff}
+  .lang-opt:active{transform:none;box-shadow:none}
 </style>
 </head>
 <body>
@@ -64,20 +71,33 @@
     <span class="logo-img"><svg viewBox="0 0 2406 2406" aria-hidden="true"><path id="cgk" d="M1107.3 299.1c-197.999 0-373.9 127.3-435.2 315.3L650 743.5v427.9c0 21.4 11 40.4 29.4 51.4l344.5 198.515V833.3h.1v-27.9L1372.7 604c33.715-19.52 70.44-32.857 108.47-39.828L1447.6 450.3C1361 353.5 1237.1 298.5 1107.3 299.1zm0 117.5-.6.6c79.699 0 156.3 27.5 217.6 78.4-2.5 1.2-7.4 4.3-11 6.1L952.8 709.3c-18.4 10.4-29.4 30-29.4 51.4V1248l-155.1-89.4V755.8c-.1-187.099 151.601-338.9 339-339.2z" fill="#1a1a2e"/><use href="#cgk" transform="rotate(60 1203 1203)"/><use href="#cgk" transform="rotate(120 1203 1203)"/><use href="#cgk" transform="rotate(180 1203 1203)"/><use href="#cgk" transform="rotate(240 1203 1203)"/><use href="#cgk" transform="rotate(300 1203 1203)"/></svg></span>
     <div>
       <h1>ChatGPT Subscription Checker</h1>
-      <p class="sub">Session JSON paste လုပ် → Plus / Pro / Free, သက်တမ်းကုန်ရက်, auto-renewal စစ်မယ်။</p>
+      <p class="sub" data-i18n="sub">Session JSON paste လုပ် → Plus / Pro / Free, သက်တမ်းကုန်ရက်, auto-renewal စစ်မယ်။</p>
     </div>
   </div>
-  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a><button class="mini-btn" id="guideBtn" onclick="toggleGuide()">Guide — Session ဘယ်လိုယူမလဲ</button></div>
+  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a><button class="mini-btn" id="guideBtn" onclick="toggleGuide()" data-i18n="guideBtn">Guide — Session ဘယ်လိုယူမလဲ</button><div class="lang-wrap">
+      <button class="mini-btn" type="button" id="langBtn" onclick="toggleLangPopup(event)">🌐 မြန်မာ</button>
+      <div class="lang-popup" id="langPopup">
+        <button type="button" class="lang-opt" data-lang="en" onclick="setLang('en')">English</button>
+        <button type="button" class="lang-opt" data-lang="my" onclick="setLang('my')">မြန်မာ (Myanmar)</button>
+        <button type="button" class="lang-opt" data-lang="zh" onclick="setLang('zh')">中文 (Chinese)</button>
+        <button type="button" class="lang-opt" data-lang="ru" onclick="setLang('ru')">Русский (Russian)</button>
+        <button type="button" class="lang-opt" data-lang="ja" onclick="setLang('ja')">日本語 (Japanese)</button>
+        <button type="button" class="lang-opt" data-lang="ko" onclick="setLang('ko')">한국어 (Korean)</button>
+        <button type="button" class="lang-opt" data-lang="de" onclick="setLang('de')">Deutsch (German)</button>
+        <button type="button" class="lang-opt" data-lang="id" onclick="setLang('id')">Bahasa Indonesia (Indonesian)</button>
+        <button type="button" class="lang-opt" data-lang="hi" onclick="setLang('hi')">हिन्दी (Hindi)</button>
+      </div>
+    </div></div>
 </header>
 <main>
   <div class="card">
-    <div class="label-row"><label for="session">ChatGPT Session JSON</label><button class="mini-btn" type="button" onclick="pasteInto('session')">Paste</button></div>
+    <div class="label-row"><label for="session">ChatGPT Session JSON</label><button class="mini-btn" type="button" onclick="pasteInto('session')" data-i18n="paste">Paste</button></div>
     <textarea id="session" placeholder='{"accessToken":"eyJ...","user":{...}}' spellcheck="false"></textarea>
-    <p class="hint">Session က password နဲ့ အတူတူပဲ — ဒီ page မှာ ဘယ်နေရာမှ မသိမ်းဘူး၊ စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။ Screenshot / chat မှာ မမျှပါနဲ့။</p>
+    <p class="hint" data-i18n="sessionHint">Session က password နဲ့ အတူတူပဲ — ဒီ page မှာ ဘယ်နေရာမှ မသိမ်းဘူး၊ စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။ Screenshot / chat မှာ မမျှပါနဲ့။</p>
     <p class="hint" id="pasteHint"></p>
     <div class="row">
-      <button class="primary" id="checkBtn" onclick="checkSub()">Check subscription</button>
-      <button class="ghost" onclick="clearAll()">Clear</button>
+      <button class="primary" id="checkBtn" onclick="checkSub()" data-i18n="checkBtn">Check subscription</button>
+      <button class="ghost" onclick="clearAll()" data-i18n="clear">Clear</button>
     </div>
     <div class="err" id="error"></div>
   </div>
@@ -88,40 +108,70 @@
     <div class="plan" id="planName" style="margin-top:10px">ChatGPT Plus</div>
     <div id="planNote" class="ok-note"></div>
     <table>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Name</td><td id="rName">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>Account</td><td id="rEmail">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0 1 22 16.9z"/></svg>Phone</td><td id="rPhone">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Plan</td><td id="rPlan">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>Plan code</td><td id="rPlanCode">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Account type</td><td id="rType">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>Active subscription</td><td id="rActive">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Expires at</td><td id="rExpires">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Renews at</td><td id="rRenews">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>Auto-renewal</td><td id="rRenew">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Billing period</td><td id="rBilling">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Days left</td><td id="rDays">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg> <span data-i18n="rowName">Name</span></td><td id="rName">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg> <span data-i18n="rowAccount">Account</span></td><td id="rEmail">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0 1 22 16.9z"/></svg> <span data-i18n="rowPhone">Phone</span></td><td id="rPhone">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg> <span data-i18n="rowPlan">Plan</span></td><td id="rPlan">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg> <span data-i18n="rowPlanCode">Plan code</span></td><td id="rPlanCode">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span data-i18n="rowType">Account type</span></td><td id="rType">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg> <span data-i18n="activeSub">Active subscription</span></td><td id="rActive">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> <span data-i18n="rowExpires">Expires at</span></td><td id="rExpires">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> <span data-i18n="rowRenews">Renews at</span></td><td id="rRenews">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg> <span data-i18n="rowAutoRenew">Auto-renewal</span></td><td id="rRenew">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="rowBilling">Billing period</span></td><td id="rBilling">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> <span data-i18n="rowDays">Days left</span></td><td id="rDays">—</td></tr>
     </table>
   </div>
 
   <div class="card guide-card" id="guideCard" style="display:none">
-    <div class="label-row"><h3 style="margin:0">Session JSON ဘယ်လိုယူမလဲ</h3><button class="mini-btn" type="button" onclick="toggleGuide()">Hide</button></div>
+    <div class="label-row"><h3 style="margin:0" data-i18n="guideTitle">Session JSON ဘယ်လိုယူမလဲ</h3><button class="mini-btn" type="button" onclick="toggleGuide()" data-i18n="hide">Hide</button></div>
     <ol>
-      <li>ChatGPT login ဝင်ထားတဲ့ browser မှာ အောက်က link ကို ဖွင့်ပါ။
+      <li><span data-i18n="step1">ChatGPT login ဝင်ထားတဲ့ browser မှာ အောက်က link ကို ဖွင့်ပါ။</span>
         <div class="copy-row">
           <span class="copy-box"><code>https://chatgpt.com/api/auth/session</code></span>
-          <button class="mini-btn" type="button" id="copySessionBtn" onclick="copySessionUrl()">Copy link</button>
+          <button class="mini-btn" type="button" id="copySessionBtn" onclick="copySessionUrl()" data-i18n="copyLink">Copy link</button>
           <span class="hint" id="copyHint"></span>
         </div>
       </li>
-      <li>ပေါ်လာတဲ့ JSON အကုန်ကို Select All → Copy လုပ်ပါ (အစ <code>{</code> ကနေ အဆုံး <code>}</code> အထိ)။</li>
-      <li>ဒီ page မှာ Paste ခလုတ်နဲ့ paste လုပ်ပြီး Check နှိပ်ပါ။</li>
+      <li><span data-i18n="step2">ပေါ်လာတဲ့ JSON အကုန်ကို Select All → Copy လုပ်ပါ (အစ { ကနေ အဆုံး } အထိ)။</span></li>
+      <li><span data-i18n="step3">ဒီ page မှာ Paste ခလုတ်နဲ့ paste လုပ်ပြီး Check နှိပ်ပါ။</span></li>
     </ol>
-    <p class="hint">Token သက်တမ်းကုန်ရင် 401 တက်မယ် — session အသစ်ပြန်ယူပါ။</p>
+    <p class="hint" data-i18n="guideNote">Token သက်တမ်းကုန်ရင် 401 တက်မယ် — session အသစ်ပြန်ယူပါ။</p>
   </div>
 </main>
-<footer>Unofficial checker — OpenAI နဲ့ မသက်ဆိုင်ပါ။<br><br><span class="dev-badge">Developed by Diameter X</span></footer>
+<footer><span data-i18n="footer">Unofficial checker — OpenAI နဲ့ မသက်ဆိုင်ပါ။</span><br><br><span class="dev-badge">Developed by Diameter X</span></footer>
 
 <script>
+// Language switcher: 9 languages, persisted in localStorage ('sc_lang'), default Myanmar.
+const LANG_NAMES={en:"English",my:"မြန်မာ",zh:"中文",ru:"Русский",ja:"日本語",ko:"한국어",de:"Deutsch",id:"Bahasa Indonesia",hi:"हिन्दी"};
+const I18N={
+en:{sub:"Paste your Session JSON → check Plus / Pro / Free, expiry date and auto-renewal.",guideBtn:"Guide — How to get your Session",hideGuide:"Hide Guide",paste:"Paste",sessionHint:"A Session is like a password — it is never stored on this page and is cleared right after the check. Don't share it in screenshots or chat.",pasteEmpty:"Clipboard is empty — copy something first.",pasteDone:"Pasted ✓",pasteDenied:"The browser won't allow clipboard access — tap the box and paste it yourself (long-press → Paste).",checkBtn:"Check subscription",checking:"Checking…",clear:"Clear",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActiveOn:"Subscription is active with auto-renewal on.",planNoteActiveOff:"Subscription is active, auto-renewal off.",planNoteFree:"Free account — no paid subscription found.",rowName:"Name",rowAccount:"Account",rowPhone:"Phone",rowPlan:"Plan",rowPlanCode:"Plan code",rowType:"Account type",rowExpires:"Expires at",rowRenews:"Renews at",rowAutoRenew:"Auto-renewal",rowBilling:"Billing period",rowDays:"Days left",yes:"Yes",no:"No",on:"On",off:"Off",days:"days",expired:"Expired",guideTitle:"How to get your Session JSON",hide:"Hide",step1:"In the browser where you're logged into ChatGPT, open the link below.",step2:"Select All and Copy all the JSON that appears (from the first { to the last }).",step3:"On this page, paste with the Paste button and tap Check.",guideNote:"If the token has expired you'll get a 401 — get a fresh Session.",copyLink:"Copy link",copied:"Copied ✓",copyFail:"Couldn't copy — please copy the link yourself.",footer:"Unofficial checker — not affiliated with OpenAI.",errBadJson:"Invalid JSON. Did you copy the full JSON from chatgpt.com/api/auth/session? It must run from the first { to the last }.",errNoToken:"No accessToken found. Paste the full Session JSON — not just the token.",errProxy403:"Proxy error (403): ChatGPT is blocking the proxy — your Session isn't wrong. Try again later.",errProxySuffix:"Try a fresh Session.",errProxyNoJson:"The proxy didn't return JSON — got: ",errProxyNoAnswer:"The proxy didn't return a subscription answer. Try again later.",errNoProxy:"No proxy available — try again later.",errNoAccount:"No account found. Try a fresh Session."},
+my:{sub:"Session JSON paste လုပ် → Plus / Pro / Free, သက်တမ်းကုန်ရက်, auto-renewal စစ်မယ်။",guideBtn:"Guide — Session ဘယ်လိုယူမလဲ",hideGuide:"Hide Guide",paste:"Paste",sessionHint:"Session က password နဲ့ အတူတူပဲ — ဒီ page မှာ ဘယ်နေရာမှ မသိမ်းဘူး၊ စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။ Screenshot / chat မှာ မမျှပါနဲ့။",pasteEmpty:"Clipboard မှာ ဘာမှ မရှိဘူး — အရင် Copy လုပ်ပါ။",pasteDone:"Paste လုပ်ပြီးပြီ ✓",pasteDenied:"Browser က Clipboard ဖွင့်ခွင့် မပေးဘူး — အကွက်ကို နှိပ်ပြီး ကိုယ်တိုင် Paste လုပ်ပါ (long-press → Paste)။",checkBtn:"Check subscription",checking:"စစ်နေတယ်…",clear:"ရှင်းမယ်",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActiveOn:"Subscription က active ဖြစ်တယ်, auto-renewal on ထားတယ်။",planNoteActiveOff:"Subscription က active ဖြစ်တယ်, auto-renewal ပိတ်ထားတယ်။",planNoteFree:"Free account — paid subscription မရှိဘူး။",rowName:"Name",rowAccount:"Account",rowPhone:"Phone",rowPlan:"Plan",rowPlanCode:"Plan code",rowType:"Account type",rowExpires:"Expires at",rowRenews:"Renews at",rowAutoRenew:"Auto-renewal",rowBilling:"Billing period",rowDays:"Days left",yes:"Yes",no:"No",on:"On",off:"Off",days:"ရက်",expired:"သက်တမ်းကုန်ပြီ",guideTitle:"Session JSON ဘယ်လိုယူမလဲ",hide:"ဖျောက်မယ်",step1:"ChatGPT login ဝင်ထားတဲ့ browser မှာ အောက်က link ကို ဖွင့်ပါ။",step2:"ပေါ်လာတဲ့ JSON အကုန်ကို Select All → Copy လုပ်ပါ (အစ { ကနေ အဆုံး } အထိ)။",step3:"ဒီ page မှာ Paste ခလုတ်နဲ့ paste လုပ်ပြီး Check နှိပ်ပါ။",guideNote:"Token သက်တမ်းကုန်ရင် 401 တက်မယ် — session အသစ်ပြန်ယူပါ။",copyLink:"Copy link",copied:"Copy လုပ်ပြီးပြီ ✓",copyFail:"Copy မရဘူး — link ကို ကိုယ်တိုင် ကူးပါ။",footer:"Unofficial checker — OpenAI နဲ့ မသက်ဆိုင်ပါ။",errBadJson:"JSON မမှန်ဘူး။ chatgpt.com/api/auth/session က JSON အပြည့်ကို copy ခဲ့လား ပြန်စစ်ပါ — အစ { ကနေ အဆုံး } အထိ ပါရမယ်။",errNoToken:"accessToken ရှာမတွေ့ဘူး။ Session JSON အပြည့်ပဲ paste ပါ — token သီးသန့်မဟုတ်ဘူး။",errProxy403:"Proxy error (403): ChatGPT က proxy ကို ပိတ်ထားတယ် — Session မှားတာမဟုတ်ဘူး။ ခဏနေပြန်စမ်းပါ။",errProxySuffix:"Session အသစ်ပြန်ယူကြည့်ပါ။",errProxyNoJson:"Proxy က JSON မပြန်ဘူး — ပြန်လာတာ: ",errProxyNoAnswer:"Proxy က subscription အဖြေ မပြန်ဘူး။ ခဏနေပြန်စမ်းပါ။",errNoProxy:"Proxy မရှိဘူး — ခဏနေပြန်စမ်းပါ။",errNoAccount:"Account ရှာမတွေ့ဘူး။ Session အသစ်ပြန်ယူကြည့်ပါ။"},
+zh:{sub:"粘贴 Session JSON → 查询 Plus / Pro / Free、到期日和自动续费。",guideBtn:"指南 — 如何获取 Session",hideGuide:"隐藏指南",paste:"粘贴",sessionHint:"Session 就像密码 — 本页绝不保存，检查后立即清除。请勿在截图或聊天中分享。",pasteEmpty:"剪贴板是空的 — 请先复制内容。",pasteDone:"已粘贴 ✓",pasteDenied:"浏览器不允许访问剪贴板 — 请点按输入框自行粘贴（长按 → 粘贴）。",checkBtn:"检查订阅",checking:"检查中…",clear:"清除",activeSub:"订阅有效",noActiveSub:"无有效订阅",planNoteActiveOn:"订阅有效，已开启自动续费。",planNoteActiveOff:"订阅有效，自动续费已关闭。",planNoteFree:"免费账户 — 未找到付费订阅。",rowName:"姓名",rowAccount:"账号",rowPhone:"电话",rowPlan:"套餐",rowPlanCode:"套餐代码",rowType:"账号类型",rowExpires:"到期时间",rowRenews:"续费时间",rowAutoRenew:"自动续费",rowBilling:"账单周期",rowDays:"剩余天数",yes:"是",no:"否",on:"开启",off:"关闭",days:"天",expired:"已过期",guideTitle:"如何获取 Session JSON",hide:"隐藏",step1:"在已登录 ChatGPT 的浏览器中打开下面的链接。",step2:"全选并复制显示的全部 JSON（从第一个 { 到最后一个 }）。",step3:"在此页面上用“粘贴”按钮粘贴，然后点按“检查”。",guideNote:"如果令牌已过期，会返回 401 — 请重新获取 Session。",copyLink:"复制链接",copied:"已复制 ✓",copyFail:"无法复制 — 请自行复制链接。",footer:"非官方查询工具 — 与 OpenAI 无关。",errBadJson:"JSON 无效。您是否复制了 chatgpt.com/api/auth/session 的完整 JSON？必须从第一个 { 到最后一个 }。",errNoToken:"未找到 accessToken。请粘贴完整的 Session JSON — 不只是令牌本身。",errProxy403:"代理错误 (403)：ChatGPT 屏蔽了代理 — 不是您的 Session 有问题。稍后再试。",errProxySuffix:"请尝试获取新的 Session。",errProxyNoJson:"代理未返回 JSON — 收到的是：",errProxyNoAnswer:"代理未返回订阅结果。请稍后再试。",errNoProxy:"没有可用的代理 — 请稍后再试。",errNoAccount:"未找到账号。请尝试获取新的 Session。"},
+ru:{sub:"Вставьте Session JSON → проверка Plus / Pro / Free, даты окончания и автопродления.",guideBtn:"Инструкция — как получить Session",hideGuide:"Скрыть инструкцию",paste:"Вставить",sessionHint:"Session — как пароль: на этой странице он нигде не сохраняется и удаляется сразу после проверки. Не делитесь им в скриншотах или чате.",pasteEmpty:"Буфер обмена пуст — сначала скопируйте что-нибудь.",pasteDone:"Вставлено ✓",pasteDenied:"Браузер не разрешает доступ к буферу обмена — нажмите на поле и вставьте сами (долгое нажатие → «Вставить»).",checkBtn:"Проверить подписку",checking:"Проверка…",clear:"Очистить",activeSub:"Подписка активна",noActiveSub:"Нет активной подписки",planNoteActiveOn:"Подписка активна, автопродление включено.",planNoteActiveOff:"Подписка активна, автопродление выключено.",planNoteFree:"Бесплатный аккаунт — платной подписки не найдено.",rowName:"Имя",rowAccount:"Аккаунт",rowPhone:"Телефон",rowPlan:"Тариф",rowPlanCode:"Код тарифа",rowType:"Тип аккаунта",rowExpires:"Истекает",rowRenews:"Продлевается",rowAutoRenew:"Автопродление",rowBilling:"Период оплаты",rowDays:"Осталось дней",yes:"Да",no:"Нет",on:"Вкл.",off:"Выкл.",days:"дн.",expired:"Истекла",guideTitle:"Как получить Session JSON",hide:"Скрыть",step1:"В браузере, где вы вошли в ChatGPT, откройте ссылку ниже.",step2:"Выделите всё и скопируйте весь появившийся JSON (от первой { до последней }).",step3:"На этой странице вставьте кнопкой «Вставить» и нажмите «Проверить».",guideNote:"Если токен истёк, будет 401 — получите новый Session.",copyLink:"Копировать ссылку",copied:"Скопировано ✓",copyFail:"Не удалось скопировать — скопируйте ссылку сами.",footer:"Неофициальная проверка — не связана с OpenAI.",errBadJson:"Неверный JSON. Вы скопировали полный JSON из chatgpt.com/api/auth/session? Он должен идти от первой { до последней }.",errNoToken:"accessToken не найден. Вставьте полный Session JSON — не только сам токен.",errProxy403:"Ошибка прокси (403): ChatGPT блокирует прокси — дело не в вашем Session. Попробуйте позже.",errProxySuffix:"Попробуйте получить новый Session.",errProxyNoJson:"Прокси не вернул JSON — получено: ",errProxyNoAnswer:"Прокси не вернул ответ о подписке. Попробуйте позже.",errNoProxy:"Прокси недоступен — попробуйте позже.",errNoAccount:"Аккаунт не найден. Попробуйте получить новый Session."},
+ja:{sub:"Session JSON を貼り付け → Plus / Pro / Free、有効期限、自動更新を確認。",guideBtn:"ガイド — Session の取得方法",hideGuide:"ガイドを隠す",paste:"貼り付け",sessionHint:"Session はパスワードと同じです — このページでは保存されず、確認後すぐに消去されます。スクリーンショットやチャットで共有しないでください。",pasteEmpty:"クリップボードが空です — 先にコピーしてください。",pasteDone:"貼り付けました ✓",pasteDenied:"ブラウザがクリップボードへのアクセスを許可しません — 欄をタップして自分で貼り付けてください（長押し → 貼り付け）。",checkBtn:"サブスクを確認",checking:"確認中…",clear:"クリア",activeSub:"サブスク有効",noActiveSub:"有効なサブスクがありません",planNoteActiveOn:"サブスクは有効で、自動更新はオンです。",planNoteActiveOff:"サブスクは有効ですが、自動更新はオフです。",planNoteFree:"無料アカウント — 有料サブスクが見つかりません。",rowName:"名前",rowAccount:"アカウント",rowPhone:"電話",rowPlan:"プラン",rowPlanCode:"プランコード",rowType:"アカウント種別",rowExpires:"有効期限",rowRenews:"更新日",rowAutoRenew:"自動更新",rowBilling:"請求期間",rowDays:"残り日数",yes:"はい",no:"いいえ",on:"オン",off:"オフ",days:"日",expired:"期限切れ",guideTitle:"Session JSON の取得方法",hide:"隠す",step1:"ChatGPT にログインしているブラウザで、下のリンクを開きます。",step2:"表示された JSON をすべて選択してコピーします（最初の { から最後の } まで）。",step3:"このページで「貼り付け」ボタンで貼り付け、「確認」をタップします。",guideNote:"トークンの期限が切れると 401 になります — 新しい Session を取得してください。",copyLink:"リンクをコピー",copied:"コピーしました ✓",copyFail:"コピーできませんでした — リンクを自分でコピーしてください。",footer:"非公式チェッカー — OpenAI とは関係ありません。",errBadJson:"JSON が無効です。chatgpt.com/api/auth/session の JSON をすべてコピーしましたか？最初の { から最後の } まで必要です。",errNoToken:"accessToken が見つかりません。Session JSON 全体を貼り付けてください — トークンだけではだめです。",errProxy403:"プロキシエラー (403)：ChatGPT がプロキシをブロックしています — Session の問題ではありません。しばらくしてから再試行してください。",errProxySuffix:"新しい Session を取得してみてください。",errProxyNoJson:"プロキシが JSON を返しませんでした — 返ってきたもの：",errProxyNoAnswer:"プロキシがサブスクの回答を返しませんでした。しばらくしてから再試行してください。",errNoProxy:"プロキシがありません — しばらくしてから再試行してください。",errNoAccount:"アカウントが見つかりません。新しい Session を取得してみてください。"},
+ko:{sub:"Session JSON 붙여넣기 → Plus / Pro / Free, 만료일, 자동 갱신 확인.",guideBtn:"가이드 — Session 가져오는 방법",hideGuide:"가이드 숨기기",paste:"붙여넣기",sessionHint:"Session은 비밀번호와 같습니다 — 이 페이지에 저장되지 않으며 확인 직후 지워집니다. 스크린샷이나 채팅으로 공유하지 마세요.",pasteEmpty:"클립보드가 비어 있습니다 — 먼저 복사하세요.",pasteDone:"붙여넣었습니다 ✓",pasteDenied:"브라우저가 클립보드 접근을 허용하지 않습니다 — 입력란을 탭하여 직접 붙여넣으세요(길게 누르기 → 붙여넣기).",checkBtn:"구독 확인",checking:"확인 중…",clear:"지우기",activeSub:"구독 활성",noActiveSub:"활성 구독이 없습니다",planNoteActiveOn:"구독이 활성 상태이며 자동 갱신이 켜져 있습니다.",planNoteActiveOff:"구독이 활성 상태이지만 자동 갱신이 꺼져 있습니다.",planNoteFree:"무료 계정 — 유료 구독이 없습니다.",rowName:"이름",rowAccount:"계정",rowPhone:"전화",rowPlan:"플랜",rowPlanCode:"플랜 코드",rowType:"계정 유형",rowExpires:"만료일",rowRenews:"갱신일",rowAutoRenew:"자동 갱신",rowBilling:"결제 주기",rowDays:"남은 일수",yes:"예",no:"아니요",on:"켜짐",off:"꺼짐",days:"일",expired:"만료됨",guideTitle:"Session JSON 가져오는 방법",hide:"숨기기",step1:"ChatGPT에 로그인된 브라우저에서 아래 링크를 여세요.",step2:"표시된 JSON을 모두 선택한 뒤 복사하세요(첫 번째 {부터 마지막 }까지).",step3:"이 페이지에서 붙여넣기 버튼으로 붙여넣고 확인을 탭하세요.",guideNote:"토큰이 만료되면 401이 표시됩니다 — 새 Session을 가져오세요.",copyLink:"링크 복사",copied:"복사했습니다 ✓",copyFail:"복사할 수 없습니다 — 링크를 직접 복사하세요.",footer:"비공식 체커 — OpenAI와 무관합니다.",errBadJson:"JSON이 잘못되었습니다. chatgpt.com/api/auth/session에서 전체 JSON을 복사했나요? 첫 번째 {부터 마지막 }까지 포함되어야 합니다.",errNoToken:"accessToken을 찾을 수 없습니다. 전체 Session JSON을 붙여넣으세요 — 토큰만으로는 안 됩니다.",errProxy403:"프록시 오류 (403): ChatGPT가 프록시를 차단했습니다 — Session 문제가 아닙니다. 나중에 다시 시도하세요.",errProxySuffix:"새 Session을 가져와 보세요.",errProxyNoJson:"프록시가 JSON을 반환하지 않았습니다 — 받은 내용: ",errProxyNoAnswer:"프록시가 구독 결과를 반환하지 않았습니다. 나중에 다시 시도하세요.",errNoProxy:"사용 가능한 프록시가 없습니다 — 나중에 다시 시도하세요.",errNoAccount:"계정을 찾을 수 없습니다. 새 Session을 가져와 보세요."},
+de:{sub:"Session-JSON einfügen → Plus / Pro / Free, Ablaufdatum und automatische Verlängerung prüfen.",guideBtn:"Anleitung — Session abrufen",hideGuide:"Anleitung ausblenden",paste:"Einfügen",sessionHint:"Eine Session ist wie ein Passwort — sie wird auf dieser Seite nirgendwo gespeichert und direkt nach der Prüfung gelöscht. Nicht in Screenshots oder Chats teilen.",pasteEmpty:"Die Zwischenablage ist leer — bitte zuerst etwas kopieren.",pasteDone:"Eingefügt ✓",pasteDenied:"Der Browser erlaubt keinen Zugriff auf die Zwischenablage — tippe ins Feld und füge selbst ein (lange drücken → Einfügen).",checkBtn:"Abo prüfen",checking:"Wird geprüft…",clear:"Leeren",activeSub:"Abo aktiv",noActiveSub:"Kein aktives Abo",planNoteActiveOn:"Abo ist aktiv, automatische Verlängerung ist an.",planNoteActiveOff:"Abo ist aktiv, automatische Verlängerung ist aus.",planNoteFree:"Kostenloses Konto — kein bezahltes Abo gefunden.",rowName:"Name",rowAccount:"Konto",rowPhone:"Telefon",rowPlan:"Tarif",rowPlanCode:"Tarifcode",rowType:"Kontotyp",rowExpires:"Läuft ab am",rowRenews:"Verlängert sich am",rowAutoRenew:"Automatische Verlängerung",rowBilling:"Abrechnungszeitraum",rowDays:"Übrige Tage",yes:"Ja",no:"Nein",on:"An",off:"Aus",days:"Tage",expired:"Abgelaufen",guideTitle:"So erhalten Sie Ihre Session-JSON",hide:"Ausblenden",step1:"Öffne den Link unten in dem Browser, in dem du bei ChatGPT angemeldet bist.",step2:"Alles markieren und die gesamte angezeigte JSON kopieren (von der ersten { bis zur letzten }).",step3:"Auf dieser Seite mit der Schaltfläche „Einfügen“ einfügen und auf „Prüfen“ tippen.",guideNote:"Wenn das Token abgelaufen ist, gibt es einen 401-Fehler — hole dir eine neue Session.",copyLink:"Link kopieren",copied:"Kopiert ✓",copyFail:"Kopieren fehlgeschlagen — bitte den Link selbst kopieren.",footer:"Inoffizieller Checker — nicht mit OpenAI verbunden.",errBadJson:"Ungültiges JSON. Hast du das vollständige JSON von chatgpt.com/api/auth/session kopiert? Es muss von der ersten { bis zur letzten } reichen.",errNoToken:"Kein accessToken gefunden. Bitte die vollständige Session-JSON einfügen — nicht nur das Token.",errProxy403:"Proxy-Fehler (403): ChatGPT blockiert den Proxy — deine Session ist nicht falsch. Bitte später erneut versuchen.",errProxySuffix:"Bitte versuche es mit einer neuen Session.",errProxyNoJson:"Der Proxy hat kein JSON zurückgegeben — erhalten: ",errProxyNoAnswer:"Der Proxy hat keine Antwort zur Subscription geliefert. Bitte später erneut versuchen.",errNoProxy:"Kein Proxy verfügbar — bitte später erneut versuchen.",errNoAccount:"Kein Konto gefunden. Bitte versuche es mit einer neuen Session."},
+id:{sub:"Tempel Session JSON → periksa Plus / Pro / Free, tanggal kedaluwarsa, dan perpanjangan otomatis.",guideBtn:"Panduan — Cara mendapatkan Session",hideGuide:"Sembunyikan Panduan",paste:"Tempel",sessionHint:"Session itu seperti kata sandi — tidak pernah disimpan di halaman ini dan langsung dihapus setelah pemeriksaan. Jangan bagikan lewat tangkapan layar atau chat.",pasteEmpty:"Clipboard kosong — salin sesuatu dulu.",pasteDone:"Ditempel ✓",pasteDenied:"Browser tidak mengizinkan akses clipboard — ketuk kotaknya lalu tempel sendiri (tekan lama → Tempel).",checkBtn:"Periksa langganan",checking:"Memeriksa…",clear:"Hapus",activeSub:"Langganan aktif",noActiveSub:"Tidak ada langganan aktif",planNoteActiveOn:"Langganan aktif dengan perpanjangan otomatis menyala.",planNoteActiveOff:"Langganan aktif, perpanjangan otomatis mati.",planNoteFree:"Akun gratis — tidak ada langganan berbayar.",rowName:"Nama",rowAccount:"Akun",rowPhone:"Telepon",rowPlan:"Paket",rowPlanCode:"Kode paket",rowType:"Jenis akun",rowExpires:"Berakhir pada",rowRenews:"Diperpanjang pada",rowAutoRenew:"Perpanjangan otomatis",rowBilling:"Periode penagihan",rowDays:"Hari tersisa",yes:"Ya",no:"Tidak",on:"Menyala",off:"Mati",days:"hari",expired:"Kedaluwarsa",guideTitle:"Cara mendapatkan Session JSON",hide:"Sembunyikan",step1:"Di browser tempat Anda masuk ke ChatGPT, buka tautan di bawah.",step2:"Pilih Semua lalu Salin semua JSON yang muncul (dari { pertama sampai } terakhir).",step3:"Di halaman ini, tempel dengan tombol Tempel lalu ketuk Periksa.",guideNote:"Jika token kedaluwarsa, Anda akan mendapat 401 — ambil Session baru.",copyLink:"Salin tautan",copied:"Disalin ✓",copyFail:"Tidak bisa menyalin — silakan salin tautan sendiri.",footer:"Pemeriksa tidak resmi — tidak berafiliasi dengan OpenAI.",errBadJson:"JSON tidak valid. Apakah Anda menyalin JSON lengkap dari chatgpt.com/api/auth/session? Harus dari { pertama sampai } terakhir.",errNoToken:"accessToken tidak ditemukan. Tempel Session JSON lengkap — bukan hanya tokennya.",errProxy403:"Kesalahan proxy (403): ChatGPT memblokir proxy — bukan Session Anda yang salah. Coba lagi nanti.",errProxySuffix:"Coba ambil Session baru.",errProxyNoJson:"Proxy tidak mengembalikan JSON — yang diterima: ",errProxyNoAnswer:"Proxy tidak mengembalikan jawaban langganan. Coba lagi nanti.",errNoProxy:"Tidak ada proxy — coba lagi nanti.",errNoAccount:"Akun tidak ditemukan. Coba ambil Session baru."},
+hi:{sub:"Session JSON पेस्ट करें → Plus / Pro / Free, समाप्ति तिथि और ऑटो-रिन्यूअल जाँचें।",guideBtn:"गाइड — Session कैसे प्राप्त करें",hideGuide:"गाइड छिपाएँ",paste:"पेस्ट करें",sessionHint:"Session पासवर्ड जैसा है — यह इस पेज पर कहीं सहेजा नहीं जाता और जाँच के तुरंत बाद हटा दिया जाता है। इसे स्क्रीनशॉट या चैट में साझा न करें।",pasteEmpty:"क्लिपबोर्ड खाली है — पहले कुछ कॉपी करें।",pasteDone:"पेस्ट हो गया ✓",pasteDenied:"ब्राउज़र क्लिपबोर्ड की अनुमति नहीं देता — बॉक्स पर टैप करके खुद पेस्ट करें (लॉन्ग-प्रेस → पेस्ट)।",checkBtn:"सदस्यता जाँचें",checking:"जाँच हो रही है…",clear:"साफ़ करें",activeSub:"सदस्यता सक्रिय है",noActiveSub:"कोई सक्रिय सदस्यता नहीं है",planNoteActiveOn:"सदस्यता सक्रिय है, ऑटो-रिन्यूअल चालू है।",planNoteActiveOff:"सदस्यता सक्रिय है, ऑटो-रिन्यूअल बंद है।",planNoteFree:"मुफ़्त खाता — कोई सशुल्क सदस्यता नहीं मिली।",rowName:"नाम",rowAccount:"खाता",rowPhone:"फ़ोन",rowPlan:"प्लान",rowPlanCode:"प्लान कोड",rowType:"खाता प्रकार",rowExpires:"समाप्ति तिथि",rowRenews:"नवीनीकरण तिथि",rowAutoRenew:"ऑटो-रिन्यूअल",rowBilling:"बिलिंग अवधि",rowDays:"शेष दिन",yes:"हाँ",no:"नहीं",on:"चालू",off:"बंद",days:"दिन",expired:"समाप्त हो गया",guideTitle:"Session JSON कैसे प्राप्त करें",hide:"छिपाएँ",step1:"उस ब्राउज़र में नीचे दिया गया लिंक खोलें जहाँ आप ChatGPT में लॉगिन हैं।",step2:"दिखाई देने वाला पूरा JSON सेलेक्ट ऑल करके कॉपी करें (पहले { से अंतिम } तक)।",step3:"इस पेज पर पेस्ट बटन से पेस्ट करें और जाँचें टैप करें।",guideNote:"यदि टोकन समाप्त हो गया है तो 401 मिलेगा — नया Session लें।",copyLink:"लिंक कॉपी करें",copied:"कॉपी हो गया ✓",copyFail:"कॉपी नहीं हो सका — कृपया लिंक खुद कॉपी करें।",footer:"अनौपचारिक चेकर — OpenAI से संबद्ध नहीं है।",errBadJson:"अमान्य JSON। क्या आपने chatgpt.com/api/auth/session से पूरा JSON कॉपी किया था? यह पहले { से अंतिम } तक होना चाहिए।",errNoToken:"accessToken नहीं मिला। पूरा Session JSON पेस्ट करें — सिर्फ टोकन नहीं।",errProxy403:"प्रॉक्सी त्रुटि (403): ChatGPT प्रॉक्सी को ब्लॉक कर रहा है — आपका Session गलत नहीं है। बाद में पुनः प्रयास करें।",errProxySuffix:"नया Session लेकर देखें।",errProxyNoJson:"प्रॉक्सी ने JSON नहीं लौटाया — मिला: ",errProxyNoAnswer:"प्रॉक्सी ने सदस्यता का उत्तर नहीं दिया। बाद में पुनः प्रयास करें।",errNoProxy:"कोई प्रॉक्सी उपलब्ध नहीं है — बाद में पुनः प्रयास करें।",errNoAccount:"खाता नहीं मिला। नया Session लेकर देखें।"}
+};
+let LANG='my';
+try{ LANG=localStorage.getItem('sc_lang')||'my'; }catch(e){}
+if(!I18N[LANG]) LANG='my';
+function t(k){ const d=I18N[LANG]||{}; if(d[k]!==undefined) return d[k]; if(I18N.my[k]!==undefined) return I18N.my[k]; if(I18N.en[k]!==undefined) return I18N.en[k]; return k; }
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
+  const b=document.getElementById('langBtn'); if(b) b.textContent='🌐 '+LANG_NAMES[LANG];
+  document.querySelectorAll('.lang-opt').forEach(function(o){ o.classList.toggle('active',o.getAttribute('data-lang')===LANG); });
+  document.documentElement.lang=LANG;
+  const gb=document.getElementById('guideBtn'), g=document.getElementById('guideCard');
+  if(gb) gb.textContent=(g&&getComputedStyle(g).display!=='none')?t('hideGuide'):t('guideBtn');
+}
+function setLang(l){ if(!I18N[l]) return; LANG=l; try{ localStorage.setItem('sc_lang',l); }catch(e){} applyLang(); closeLangPopup(); }
+function toggleLangPopup(e){ if(e) e.stopPropagation(); const p=document.getElementById('langPopup'); if(p) p.classList.toggle('open'); }
+function closeLangPopup(){ const p=document.getElementById('langPopup'); if(p) p.classList.remove('open'); }
+document.addEventListener('click',function(e){ const w=document.querySelector('.lang-wrap'); if(w&&!w.contains(e.target)) closeLangPopup(); });
+
 // Hub link: Pages serves the hub at the repo root ('../' from /chatgpt/),
 // the VPS serves it at /star.
 const backLink=document.getElementById('backLink');
@@ -143,13 +193,13 @@ async function copySessionUrl(){
   const say = (m)=>{ if(hint) hint.textContent = m; };
   try{
     await navigator.clipboard.writeText(url);
-    say('Copied ✓'); if(btn) btn.textContent = 'Copied ✓';
-    setTimeout(()=>{ say(''); if(btn) btn.textContent = 'Copy link'; }, 2000);
+    say(t('copied')); if(btn) btn.textContent = t('copied');
+    setTimeout(()=>{ say(''); if(btn) btn.textContent = t('copyLink'); }, 2000);
   }catch(e){
     // Fallback for browsers without clipboard-write permission.
     const ta = document.createElement('textarea');
     ta.value = url; document.body.appendChild(ta); ta.select();
-    try{ document.execCommand('copy'); say('Copied ✓'); }catch(_){ say('Copy မရဘူး — link ကို ကိုယ်တိုင် ကူးပါ။'); }
+    try{ document.execCommand('copy'); say(t('copied')); }catch(_){ say(t('copyFail')); }
     document.body.removeChild(ta);
   }
 }
@@ -161,7 +211,7 @@ function toggleGuide(){
   const g=document.getElementById('guideCard'); if(!g) return;
   const hidden = getComputedStyle(g).display==='none';
   g.style.display = hidden ? 'block' : 'none';
-  const b=document.getElementById('guideBtn'); if(b) b.textContent = hidden ? 'Hide Guide' : 'Guide — Session ဘယ်လိုယူမလဲ';
+  const b=document.getElementById('guideBtn'); if(b) b.textContent = hidden ? t('hideGuide') : t('guideBtn');
   if(hidden) g.scrollIntoView({behavior:'smooth', block:'start'});
 }
 async function pasteInto(id){
@@ -170,37 +220,37 @@ async function pasteInto(id){
   const say=(m)=>{ if(hint) hint.textContent=m; };
   try{
     if(!navigator.clipboard || !navigator.clipboard.readText) throw new Error('clipboard unavailable');
-    const t=await navigator.clipboard.readText();
-    if(!t){ say('Clipboard မှာ ဘာမှ မရှိဘူး — အရင် Copy လုပ်ပါ။'); return; }
-    el.value=t;
+    const t2=await navigator.clipboard.readText();
+    if(!t2){ say(t('pasteEmpty')); return; }
+    el.value=t2;
     el.focus();
-    say('Paste လုပ်ပြီးပြီ ✓');
+    say(t('pasteDone'));
   }catch(e){
-    say('Browser က Clipboard ဖွင့်ခွင့် မပေးဘူး — အကွက်ကို နှိပ်ပြီး ကိုယ်တိုင် Paste လုပ်ပါ (long-press → Paste)။');
+    say(t('pasteDenied'));
   }
 }
 function fmtDate(s){ if(!s) return '—'; const d=new Date(s); return isNaN(d) ? s : d.toLocaleString('en-GB',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).replace(',',''); }
-function planLabel(t, sub){
+function planLabel(t2, sub){
   const map={plus:'ChatGPT Plus',pro:'ChatGPT Pro',team:'ChatGPT Team',free:'Free'};
-  if(map[t]) return map[t];
+  if(map[t2]) return map[t2];
   if(sub==='chatgptplus') return 'ChatGPT Plus';
   if(sub==='chatgptpro') return 'ChatGPT Pro';
   if(sub==='chatgptteamplan') return 'ChatGPT Team';
-  return t || sub || 'Unknown';
+  return t2 || sub || 'Unknown';
 }
 function render(data, sessionUser){
   const accounts = data.accounts || {};
   const first = Object.values(accounts)[0];
-  if(!first){ showError('Account ရှာမတွေ့ဘူး။ Session အသစ်ပြန်ယူကြည့်ပါ။'); return; }
+  if(!first){ showError(t('errNoAccount')); return; }
   const planType = first.account && first.account.plan_type;
   const ent = first.entitlement || {};
   const label = planLabel(planType, ent.subscription_plan);
   document.getElementById('planName').textContent = label;
   const active = !!ent.has_active_subscription;
   const badge = document.getElementById('statusBadge');
-  badge.textContent = active ? 'Active subscription' : 'No active subscription';
+  badge.textContent = active ? t('activeSub') : t('noActiveSub');
   badge.className = 'badge' + (active ? '' : ' free');
-  document.getElementById('planNote').textContent = active ? 'Subscription is active with auto-renewal ' + (ent.renews_at ? 'on' : '—') : 'Free account — no paid subscription found.';
+  document.getElementById('planNote').textContent = active ? (ent.renews_at ? t('planNoteActiveOn') : t('planNoteActiveOff')) : t('planNoteFree');
   const profile = data.profile || {};
   const user = sessionUser || {};
   const name = profile.name || user.name || '—';
@@ -216,43 +266,44 @@ function render(data, sessionUser){
   document.getElementById('rPlanCode').textContent = ent.subscription_plan || planType || '—';
   const acctName = first.account && first.account.name ? ' (' + first.account.name + ')' : '';
   document.getElementById('rType').textContent = (first.account && first.account.structure ? first.account.structure : '—') + acctName;
-  document.getElementById('rActive').textContent = active ? 'Yes' : 'No';
+  document.getElementById('rActive').textContent = active ? t('yes') : t('no');
   document.getElementById('rExpires').textContent = fmtDate(ent.expires_at);
   document.getElementById('rRenews').textContent = fmtDate(ent.renews_at);
-  document.getElementById('rRenew').textContent = ent.renews_at ? 'On' : 'Off';
+  document.getElementById('rRenew').textContent = ent.renews_at ? t('on') : t('off');
   document.getElementById('rBilling').textContent = ent.billing_period || '—';
-  if(ent.expires_at){ const days=Math.ceil((new Date(ent.expires_at)-Date.now())/86400000); document.getElementById('rDays').textContent = days>=0 ? days+' days' : 'Expired'; }
+  if(ent.expires_at){ const days=Math.ceil((new Date(ent.expires_at)-Date.now())/86400000); document.getElementById('rDays').textContent = days>=0 ? days+' '+t('days') : t('expired'); }
   else document.getElementById('rDays').textContent='—';
   document.getElementById('result').style.display='block';
 }
 async function checkSub(){
   clearError();
-  const btn=document.getElementById('checkBtn'); btn.disabled=true; btn.textContent='Checking…';
+  const btn=document.getElementById('checkBtn'); btn.disabled=true; btn.textContent=t('checking');
   try{
     let session;
     try{ session=JSON.parse(document.getElementById('session').value.trim()); }
-    catch(e){ showError('JSON မမှန်ဘူး။ chatgpt.com/api/auth/session က JSON အပြည့်ကို copy ခဲ့လား ပြန်စစ်ပါ — အစ { ကနေ အဆုံး } အထိ ပါရမယ်။'); return; }
+    catch(e){ showError(t('errBadJson')); return; }
     const token=session.accessToken;
-    if(!token || !token.startsWith('eyJ')){ showError('accessToken ရှာမတွေ့ဘူး။ Session JSON အပြည့်ပဲ paste ပါ — token သီးသန့်မဟုတ်ဘူး။'); return; }
+    if(!token || !token.startsWith('eyJ')){ showError(t('errNoToken')); return; }
     const sessionUser = session.user || {};
     let data;
     if(proxyUrl){
       const r=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken:token})});
-      if(!r.ok){ const t=await r.text().catch(()=> ''); if(r.status===403){ showError('Proxy error (403): ChatGPT က proxy ကို ပိတ်ထားတယ် — Session မှားတာမဟုတ်ဘူး။ ခဏနေပြန်စမ်းပါ။'); return; } showError('Proxy error ('+r.status+'): '+t.slice(0,300)+'\nSession အသစ်ပြန်ယူကြည့်ပါ။'); return; }
+      if(!r.ok){ const t2=await r.text().catch(()=> ''); if(r.status===403){ showError(t('errProxy403')); return; } showError('Proxy error ('+r.status+'): '+t2.slice(0,300)+'\n'+t('errProxySuffix')); return; }
       const text=await r.text();
       try{ data=JSON.parse(text); }
-      catch(e){ showError('Proxy က JSON မပြန်ဘူး — ပြန်လာတာ: "'+text.slice(0,80)+'"'); return; }
-      if(!data || !data.accounts){ showError('Proxy က subscription အဖြေ မပြန်ဘူး။ ခဏနေပြန်စမ်းပါ။'); return; }
+      catch(e){ showError(t('errProxyNoJson')+'"'+text.slice(0,80)+'"'); return; }
+      if(!data || !data.accounts){ showError(t('errProxyNoAnswer')); return; }
     } else {
-      showError('Proxy မရှိဘူး — ခဏနေပြန်စမ်းပါ။');
+      showError(t('errNoProxy'));
       return;
     }
     render(data, sessionUser);
   } finally {
     document.getElementById('session').value='';
-    btn.disabled=false; btn.textContent='Check subscription';
+    btn.disabled=false; btn.textContent=t('checkBtn');
   }
 }
+applyLang();
 </script>
 </body>
 </html>

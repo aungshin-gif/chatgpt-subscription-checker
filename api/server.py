@@ -28,8 +28,11 @@ to the public internet.
 """
 import json
 import os
+import time
+import urllib.parse
 import urllib.request
 import urllib.error
+from datetime import datetime
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -114,17 +117,11 @@ def sanitise(data):
     return {"accounts": accounts}
 
 
-def get_grok_auth_entry():
-    """Return the chosen credential object from ~/.grok/auth.json.
+def _pick_grok_entry(store):
+    """Pick the credential object from a parsed auth.json store.
 
-    The file is a map scope -> credential object; prefer the
-    auth.x.ai OIDC entry (auth_mode web_login). Returns the dict,
-    or None when no login exists yet.
+    Prefer the auth.x.ai OIDC entry (auth_mode web_login).
     """
-    try:
-        store = json.loads(GROK_AUTH.read_text())
-    except Exception:
-        return None
     if not isinstance(store, dict):
         return None
     cands = list(store.values())
@@ -140,10 +137,115 @@ def get_grok_auth_entry():
     return None
 
 
+def get_grok_auth_entry():
+    """Return the chosen credential object from ~/.grok/auth.json.
+
+    The file is a map scope -> credential object; prefer the
+    auth.x.ai OIDC entry (auth_mode web_login). Returns the dict,
+    or None when no login exists yet.
+    """
+    try:
+        store = json.loads(GROK_AUTH.read_text())
+    except Exception:
+        return None
+    return _pick_grok_entry(store)
+
+
 def get_grok_token():
     """Read the xAI OAuth Bearer token from ~/.grok/auth.json."""
     entry = get_grok_auth_entry()
     return entry.get("key") if entry else None
+
+
+def _grok_token_expired(entry):
+    """True when the stored access token's expiry has passed.
+
+    expires_at may be unix seconds (or ms) or an ISO timestamp;
+    unparseable means 'unknown', not expired — the 403-retry path
+    covers that case. A 60s safety margin is applied.
+    """
+    if not isinstance(entry, dict):
+        return False
+    exp = entry.get("expires_at")
+    if exp is None:
+        return False
+    try:
+        if isinstance(exp, (int, float)):
+            ts = float(exp)
+        else:
+            s = str(exp).strip()
+            if s.isdigit():
+                ts = float(s)
+            else:
+                ts = datetime.fromisoformat(s.replace("Z", "+00:00")).timestamp()
+        if ts > 1e12:  # milliseconds
+            ts /= 1000.0
+        return time.time() > ts - 60
+    except Exception:
+        return False
+
+
+def refresh_grok_token():
+    """Refresh the Grok OAuth access token via the OIDC token endpoint.
+
+    The CLI access token lives only ~6h; the refresh token (good for
+    ~7 days) mints a new one. Uses the stored refresh_token and
+    client_id from ~/.grok/auth.json, exactly like the Grok CLI does.
+    On success the new access token (and rotated refresh token, if
+    any) is written back to auth.json (mode 0600) and the new key is
+    returned. Returns None on any failure. Tokens are never logged.
+    """
+    try:
+        store = json.loads(GROK_AUTH.read_text())
+    except Exception:
+        return None
+    entry = _pick_grok_entry(store)
+    if not isinstance(entry, dict):
+        return None
+    rt = entry.get("refresh_token")
+    client_id = entry.get("oidc_client_id")
+    issuer = (entry.get("oidc_issuer") or "https://auth.x.ai").rstrip("/")
+    if not rt or not client_id:
+        return None
+    try:
+        req = urllib.request.Request(
+            issuer + "/.well-known/openid-configuration",
+            headers={"User-Agent": UA},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            disc = json.loads(resp.read())
+        token_url = disc.get("token_endpoint") if isinstance(disc, dict) else None
+        if not token_url:
+            return None
+        data = urllib.parse.urlencode({
+            "grant_type": "refresh_token",
+            "refresh_token": rt,
+            "client_id": client_id,
+        }).encode()
+        req = urllib.request.Request(token_url, data=data, headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": UA,
+        })
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            tok = json.loads(resp.read())
+        new_key = tok.get("access_token")
+        if not new_key:
+            return None
+        entry["key"] = new_key
+        if tok.get("refresh_token"):
+            entry["refresh_token"] = tok["refresh_token"]
+        if tok.get("expires_in"):
+            try:
+                entry["expires_at"] = int(time.time()) + int(tok["expires_in"])
+            except Exception:
+                pass
+        tmp = GROK_AUTH.with_suffix(".tmp")
+        tmp.write_text(json.dumps(store))
+        os.chmod(tmp, 0o600)
+        os.replace(tmp, GROK_AUTH)
+        return new_key
+    except Exception:
+        return None
 
 
 def _val(x):
@@ -285,27 +387,46 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200, result)
 
     def _grok_check(self):
-        token = get_grok_token()
+        entry = get_grok_auth_entry()
+        token = entry.get("key") if entry else None
         if not token:
             self._send(401, {"error": "Grok login မလုပ်ရသေးဘူး — VPS မှာ `grok login --device-auth` လုပ်ပါ။"})
             return
+        # The CLI access token lives only ~6h; refresh it before use
+        # when it is expired (the ~7-day refresh token is what lasts).
+        if _grok_token_expired(entry):
+            token = refresh_grok_token() or token
         headers = {
             "Authorization": "Bearer " + token,
             "Accept": "application/json",
             "User-Agent": UA,
         }
-        try:
-            req = urllib.request.Request(GROK_SUBS, headers=headers)
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                subs = json.loads(resp.read())
-        except urllib.error.HTTPError as e:
-            if e.code == 401:
-                self._send(401, {"error": "Grok session expired — VPS မှာ `grok login --device-auth` ပြန်လုပ်ပါ။"})
-            else:
-                self._send(e.code, {"error": f"Grok returned {e.code}"})
-            return
-        except Exception as e:
-            self._send(502, {"error": f"Grok request failed: {e}"})
+        subs = None
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(GROK_SUBS, headers=headers)
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    subs = json.loads(resp.read())
+                break
+            except urllib.error.HTTPError as e:
+                # 403 is what Grok answers for an expired OAuth token
+                # (oauth2-auth-forbidden, not 401): refresh once and retry.
+                if e.code == 403 and attempt == 0:
+                    fresh = refresh_grok_token()
+                    if fresh:
+                        token = fresh
+                        headers["Authorization"] = "Bearer " + token
+                        continue
+                if e.code == 401:
+                    self._send(401, {"error": "Grok session expired — VPS မှာ `grok login --device-auth` ပြန်လုပ်ပါ။"})
+                else:
+                    self._send(e.code, {"error": f"Grok returned {e.code}"})
+                return
+            except Exception as e:
+                self._send(502, {"error": f"Grok request failed: {e}"})
+                return
+        if subs is None:
+            self._send(502, {"error": "Grok request failed"})
             return
         tier, active, offer_id = grok_tier(subs)
         # Profile (Name / email) — best-effort, never fails the check.

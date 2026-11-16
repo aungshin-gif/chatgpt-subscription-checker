@@ -118,7 +118,8 @@
     <div class="logo-col reveal">
       <div class="logo-wrap" id="logoWrap">
         <div class="logo-halo" aria-hidden="true"></div>
-        <div class="logo-ring"><img src="karinas.jpg" alt="Karinas"></div>
+        <!-- Absolute Pages URL: the VPS serves this page at /star, so a relative karinas.jpg would resolve to /karinas.jpg on redeem.gamepayhub.shop (404 — Caddy routes that to the redeem site, not the proxy). The absolute URL works on both Pages and VPS. -->
+        <div class="logo-ring"><img src="https://aungshin-gif.github.io/chatgpt-subscription-checker/karinas.jpg" alt="Karinas"></div>
       </div>
       <h1>★ Star Checking</h1>
       <p class="sub" data-i18n="hubSub">Subscription စစ်တာတွေ တစ်နေရာတည်း — နှိပ်ပြီး ရွေးပါ။</p>

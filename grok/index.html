@@ -44,6 +44,13 @@
   .ok-note{font-size:13px;color:#137333}
   .dev-badge{display:inline-block;border:2px solid #1a1a2e;border-radius:999px;padding:4px 14px;font-weight:800;background:#fff;box-shadow:3px 3px 0 #1a1a2e;color:#1a1a2e}
   footer{max-width:760px;margin:0 auto;padding:0 18px 30px;color:#777;font-size:13px}
+  .lang-wrap{position:relative}
+  .lang-popup{position:absolute;right:0;top:calc(100% + 8px);background:#fffdf8;border:3px solid #1a1a2e;border-radius:16px;box-shadow:6px 6px 0 #1a1a2e;padding:6px;display:none;z-index:50;min-width:210px}
+  .lang-popup.open{display:block}
+  .lang-opt{display:block;width:100%;text-align:left;background:transparent;border:none;border-radius:10px;padding:10px 12px;font-size:15px;font-weight:700;color:#1a1a2e;cursor:pointer;box-shadow:none}
+  .lang-opt:hover{background:#faf7f0}
+  .lang-opt.active{background:#1a1a2e;color:#fff}
+  .lang-opt:active{transform:none;box-shadow:none}
 </style>
 </head>
 <body>
@@ -52,17 +59,30 @@
     <div class="grok-badge"><svg viewBox="0 0 34 33" aria-hidden="true"><path d="M13.2371 21.0407L24.3186 12.8506C24.8619 12.4491 25.6384 12.6057 25.8973 13.2294C27.2597 16.5185 26.651 20.4712 23.9403 23.1851C21.2297 25.8989 17.4581 26.4941 14.0108 25.1386L10.2449 26.8843C15.6463 30.5806 22.2053 29.6665 26.304 25.5601C29.5551 22.3051 30.562 17.8683 29.6205 13.8673L29.629 13.8758C28.2637 7.99809 29.9647 5.64871 33.449 0.844576C33.5314 0.730667 33.6139 0.616757 33.6964 0.5L29.1113 5.09055V5.07631L13.2343 21.0436" fill="#fff"/><path d="M10.9503 23.0313C7.07343 19.3235 7.74185 13.5853 11.0498 10.2763C13.4959 7.82722 17.5036 6.82767 21.0021 8.2971L24.7595 6.55998C24.0826 6.07017 23.215 5.54334 22.2195 5.17313C17.7198 3.31926 12.3326 4.24192 8.67479 7.90126C5.15635 11.4239 4.0499 16.8403 5.94992 21.4622C7.36924 24.9165 5.04257 27.3598 2.69884 29.826C1.86829 30.7002 1.0349 31.5745 0.36364 32.5L10.9474 23.0341" fill="#fff"/></svg></div>
     <div>
       <h1>Grok Subscription Checker</h1>
-      <p class="sub">Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။</p>
+      <p class="sub" data-i18n="sub">Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။</p>
     </div>
   </div>
-  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a></div>
+  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a><div class="lang-wrap">
+      <button class="mini-btn" type="button" id="langBtn" onclick="toggleLangPopup(event)">🌐 မြန်မာ</button>
+      <div class="lang-popup" id="langPopup">
+        <button type="button" class="lang-opt" data-lang="en" onclick="setLang('en')">English</button>
+        <button type="button" class="lang-opt" data-lang="my" onclick="setLang('my')">မြန်မာ (Myanmar)</button>
+        <button type="button" class="lang-opt" data-lang="zh" onclick="setLang('zh')">中文 (Chinese)</button>
+        <button type="button" class="lang-opt" data-lang="ru" onclick="setLang('ru')">Русский (Russian)</button>
+        <button type="button" class="lang-opt" data-lang="ja" onclick="setLang('ja')">日本語 (Japanese)</button>
+        <button type="button" class="lang-opt" data-lang="ko" onclick="setLang('ko')">한국어 (Korean)</button>
+        <button type="button" class="lang-opt" data-lang="de" onclick="setLang('de')">Deutsch (German)</button>
+        <button type="button" class="lang-opt" data-lang="id" onclick="setLang('id')">Bahasa Indonesia (Indonesian)</button>
+        <button type="button" class="lang-opt" data-lang="hi" onclick="setLang('hi')">हिन्दी (Hindi)</button>
+      </div>
+    </div></div>
 </header>
 <main>
   <div class="card">
-    <label>SuperGrok / Heavy — Plan + တစ်ပတ်စာ usage</label>
-    <p class="hint">Token က VPS ပေါ်မှာ သိမ်းထားပြီးသား (`grok login` တစ်ခါ) — ဒီ page ကနေ ဘာမှ paste လုပ်စရာ မလို, token ကို ဘယ်နေရာမှ မပြဘူး။</p>
+    <label data-i18n="cardLabel">SuperGrok / Heavy — Plan + တစ်ပတ်စာ usage</label>
+    <p class="hint"><span data-i18n="cardHintA">Token က VPS ပေါ်မှာ သိမ်းထားပြီးသား (</span><code>grok login</code><span data-i18n="cardHintB"> တစ်ခါ) — ဒီ page ကနေ ဘာမှ paste လုပ်စရာ မလို, token ကို ဘယ်နေရာမှ မပြဘူး။</span></p>
     <div class="row">
-      <button class="primary" id="checkBtn" onclick="checkGrok()">Check subscription</button>
+      <button class="primary" id="checkBtn" onclick="checkGrok()" data-i18n="checkBtn">Check subscription</button>
     </div>
     <div class="err" id="error"></div>
   </div>
@@ -72,20 +92,54 @@
     <div class="plan" id="planName" style="margin-top:10px">SuperGrok</div>
     <div id="planNote" class="ok-note"></div>
     <table>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Name</td><td id="rName">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>Account</td><td id="rEmail">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Plan</td><td id="rPlan">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>Active subscription</td><td id="rActive">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Active offer</td><td id="rOffer">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Weekly usage</td><td id="rUsage">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Current period</td><td id="rPeriod">—</td></tr>
-      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Prepaid balance</td><td id="rBalance">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg> <span data-i18n="rowName">Name</span></td><td id="rName">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg> <span data-i18n="rowAccount">Account</span></td><td id="rEmail">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg> <span data-i18n="rowPlan">Plan</span></td><td id="rPlan">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg> <span data-i18n="activeSub">Active subscription</span></td><td id="rActive">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span data-i18n="rowOffer">Active offer</span></td><td id="rOffer">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> <span data-i18n="rowUsage">Weekly usage</span></td><td id="rUsage">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> <span data-i18n="rowPeriod">Current period</span></td><td id="rPeriod">—</td></tr>
+      <tr><td><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> <span data-i18n="rowBalance">Prepaid balance</span></td><td id="rBalance">—</td></tr>
     </table>
   </div>
 </main>
-<footer>Unofficial checker — xAI နဲ့ မသက်ဆိုင်ပါ။<br><br><span class="dev-badge">Developed by Diameter X</span></footer>
+<footer><span data-i18n="footer">Unofficial checker — xAI နဲ့ မသက်ဆိုင်ပါ။</span><br><br><span class="dev-badge">Developed by Diameter X</span></footer>
 
 <script>
+// Language switcher: 9 languages, persisted in localStorage ('sc_lang'), default Myanmar.
+const LANG_NAMES={en:"English",my:"မြန်မာ",zh:"中文",ru:"Русский",ja:"日本語",ko:"한국어",de:"Deutsch",id:"Bahasa Indonesia",hi:"हिन्दी"};
+const I18N={
+en:{sub:"Log in once — then just tap Check. Nothing to paste.",cardLabel:"SuperGrok / Heavy — plan + weekly usage",cardHintA:"The token is already saved on the VPS (one-time ",cardHintB:") — nothing to paste here, and the token is never shown.",checkBtn:"Check subscription",checking:"Checking…",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActive:"Subscription is active.",planNoteNone:"No active Grok subscription found for this login.",rowName:"Name",rowAccount:"Account",rowPlan:"Plan",rowOffer:"Active offer",rowUsage:"Weekly usage",rowPeriod:"Current period",rowBalance:"Prepaid balance",pctUsed:"% used",usedWord:"Used",capWord:"Cap",errProxyNoJson:"The proxy didn't return JSON — got: ",yes:"Yes",no:"No",errCheckFail:"Couldn't check — try again later.",errProxy:"Proxy error",errNotLoggedIn:"Grok isn't logged in yet — run `grok login --device-auth` on the VPS.",errSessionExpired:"Grok session expired — run `grok login --device-auth` again on the VPS.",footer:"Unofficial checker — not affiliated with xAI."},
+my:{sub:"Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။",cardLabel:"SuperGrok / Heavy — Plan + တစ်ပတ်စာ usage",cardHintA:"Token က VPS ပေါ်မှာ သိမ်းထားပြီးသား (",cardHintB:" တစ်ခါ) — ဒီ page ကနေ ဘာမှ paste လုပ်စရာ မလို, token ကို ဘယ်နေရာမှ မပြဘူး။",checkBtn:"Check subscription",checking:"စစ်နေတယ်…",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActive:"Subscription က active ဖြစ်တယ်။",planNoteNone:"ဒီ login အတွက် active Grok subscription မတွေ့ဘူး။",rowName:"Name",rowAccount:"Account",rowPlan:"Plan",rowOffer:"Active offer",rowUsage:"Weekly usage",rowPeriod:"Current period",rowBalance:"Prepaid balance",pctUsed:"% used",usedWord:"Used",capWord:"Cap",errProxyNoJson:"Proxy က JSON မပြန်ဘူး: ",yes:"Yes",no:"No",errCheckFail:"Check လုပ်လို့ မရဘူး — ခဏနေပြန်စမ်းပါ။",errProxy:"Proxy error",errNotLoggedIn:"Grok login မလုပ်ရသေးဘူး — VPS မှာ `grok login --device-auth` လုပ်ပါ။",errSessionExpired:"Grok session သက်တမ်းကုန်သွားပြီ — VPS မှာ `grok login --device-auth` ပြန်လုပ်ပါ။",footer:"Unofficial checker — xAI နဲ့ မသက်ဆိုင်ပါ။"},
+zh:{sub:"登录一次 — 之后只需点按“检查”。无需粘贴。",cardLabel:"SuperGrok / Heavy — 套餐 + 每周用量",cardHintA:"令牌已保存在 VPS 上（只需一次 ",cardHintB:"）。这里无需粘贴任何内容，令牌也不会显示。",checkBtn:"检查订阅",checking:"检查中…",activeSub:"订阅有效",noActiveSub:"无有效订阅",planNoteActive:"订阅有效。",planNoteNone:"未找到此登录的有效 Grok 订阅。",rowName:"姓名",rowAccount:"账号",rowPlan:"套餐",rowOffer:"有效优惠",rowUsage:"每周用量",rowPeriod:"当前周期",rowBalance:"预付余额",pctUsed:"% 已使用",usedWord:"已用",capWord:"上限",errProxyNoJson:"代理未返回 JSON — 收到的是：",yes:"是",no:"否",errCheckFail:"无法检查 — 请稍后再试。",errProxy:"代理错误",errNotLoggedIn:"尚未登录 Grok — 请在 VPS 上运行 `grok login --device-auth`。",errSessionExpired:"Grok 会话已过期 — 请在 VPS 上再次运行 `grok login --device-auth`。",footer:"非官方查询工具 — 与 xAI 无关。"},
+ru:{sub:"Войдите один раз — затем просто нажмите «Проверить». Вставлять ничего не нужно.",cardLabel:"SuperGrok / Heavy — тариф + использование за неделю",cardHintA:"Токен уже сохранён на VPS (один раз — ",cardHintB:") — здесь ничего вставлять не нужно, токен нигде не показывается.",checkBtn:"Проверить подписку",checking:"Проверка…",activeSub:"Подписка активна",noActiveSub:"Нет активной подписки",planNoteActive:"Подписка активна.",planNoteNone:"Для этого логина активной подписки Grok не найдено.",rowName:"Имя",rowAccount:"Аккаунт",rowPlan:"Тариф",rowOffer:"Активное предложение",rowUsage:"Использование за неделю",rowPeriod:"Текущий период",rowBalance:"Предоплаченный баланс",pctUsed:"% использовано",usedWord:"Использовано",capWord:"Лимит",errProxyNoJson:"Прокси не вернул JSON — получено: ",yes:"Да",no:"Нет",errCheckFail:"Не удалось проверить — попробуйте позже.",errProxy:"Ошибка прокси",errNotLoggedIn:"Вы ещё не вошли в Grok — выполните `grok login --device-auth` на VPS.",errSessionExpired:"Сессия Grok истекла — снова выполните `grok login --device-auth` на VPS.",footer:"Неофициальная проверка — не связана с xAI."},
+ja:{sub:"ログインは一度だけ — あとは「チェック」をタップするだけ。貼り付けは不要です。",cardLabel:"SuperGrok / Heavy — プラン + 週間使用量",cardHintA:"トークンは VPS に保存済みです（",cardHintB:"は一度だけ）。ここで貼り付ける必要はなく、トークンは表示されません。",checkBtn:"サブスクを確認",checking:"確認中…",activeSub:"サブスク有効",noActiveSub:"有効なサブスクがありません",planNoteActive:"サブスクは有効です。",planNoteNone:"このログインでは有効な Grok サブスクが見つかりません。",rowName:"名前",rowAccount:"アカウント",rowPlan:"プラン",rowOffer:"有効なオファー",rowUsage:"週間使用量",rowPeriod:"現在の期間",rowBalance:"プリペイド残高",pctUsed:"% 使用済み",usedWord:"使用済み",capWord:"上限",errProxyNoJson:"プロキシが JSON を返しませんでした — 返ってきたもの：",yes:"はい",no:"いいえ",errCheckFail:"確認できませんでした — しばらくしてから再試行してください。",errProxy:"プロキシエラー",errNotLoggedIn:"Grok にまだログインしていません — VPS で `grok login --device-auth` を実行してください。",errSessionExpired:"Grok セッションの期限が切れました — VPS で `grok login --device-auth` をもう一度実行してください。",footer:"非公式チェッカー — xAI とは関係ありません。"},
+ko:{sub:"한 번 로그인 — 이후에는 확인만 탭하세요. 붙여넣을 것이 없습니다.",cardLabel:"SuperGrok / Heavy — 플랜 + 주간 사용량",cardHintA:"토큰은 이미 VPS에 저장되어 있습니다(한 번의 ",cardHintB:"만으로 충분). 여기에 붙여넣을 필요가 없으며 토큰은 표시되지 않습니다.",checkBtn:"구독 확인",checking:"확인 중…",activeSub:"구독 활성",noActiveSub:"활성 구독이 없습니다",planNoteActive:"구독이 활성 상태입니다.",planNoteNone:"이 로그인에 활성 Grok 구독이 없습니다.",rowName:"이름",rowAccount:"계정",rowPlan:"플랜",rowOffer:"활성 오퍼",rowUsage:"주간 사용량",rowPeriod:"현재 기간",rowBalance:"선불 잔액",pctUsed:"% 사용됨",usedWord:"사용량",capWord:"한도",errProxyNoJson:"프록시가 JSON을 반환하지 않았습니다 — 받은 내용: ",yes:"예",no:"아니요",errCheckFail:"확인할 수 없습니다 — 나중에 다시 시도하세요.",errProxy:"프록시 오류",errNotLoggedIn:"Grok에 아직 로그인하지 않았습니다 — VPS에서 `grok login --device-auth`를 실행하세요.",errSessionExpired:"Grok 세션이 만료되었습니다 — VPS에서 `grok login --device-auth`를 다시 실행하세요.",footer:"비공식 체커 — xAI와 무관합니다."},
+de:{sub:"Einmal anmelden — danach nur noch auf „Prüfen“ tippen. Nichts einzufügen.",cardLabel:"SuperGrok / Heavy — Tarif + Wochenverbrauch",cardHintA:"Das Token ist bereits auf dem VPS gespeichert (einmaliger ",cardHintB:") — hier muss nichts eingefügt werden, und das Token wird nie angezeigt.",checkBtn:"Abo prüfen",checking:"Wird geprüft…",activeSub:"Abo aktiv",noActiveSub:"Kein aktives Abo",planNoteActive:"Abo ist aktiv.",planNoteNone:"Für diesen Login wurde kein aktives Grok-Abo gefunden.",rowName:"Name",rowAccount:"Konto",rowPlan:"Tarif",rowOffer:"Aktives Angebot",rowUsage:"Wochenverbrauch",rowPeriod:"Aktueller Zeitraum",rowBalance:"Prepaid-Guthaben",pctUsed:"% verwendet",usedWord:"Verbraucht",capWord:"Limit",errProxyNoJson:"Der Proxy hat kein JSON zurückgegeben — erhalten: ",yes:"Ja",no:"Nein",errCheckFail:"Prüfung fehlgeschlagen — bitte später erneut versuchen.",errProxy:"Proxy-Fehler",errNotLoggedIn:"Noch nicht bei Grok angemeldet — bitte `grok login --device-auth` auf dem VPS ausführen.",errSessionExpired:"Grok-Sitzung abgelaufen — bitte `grok login --device-auth` erneut auf dem VPS ausführen.",footer:"Inoffizieller Checker — nicht mit xAI verbunden."},
+id:{sub:"Masuk sekali — lalu tinggal ketuk Periksa. Tidak ada yang perlu ditempel.",cardLabel:"SuperGrok / Heavy — paket + pemakaian mingguan",cardHintA:"Token sudah tersimpan di VPS (sekali ",cardHintB:" saja) — tidak perlu menempel apa pun di sini, dan token tidak pernah ditampilkan.",checkBtn:"Periksa langganan",checking:"Memeriksa…",activeSub:"Langganan aktif",noActiveSub:"Tidak ada langganan aktif",planNoteActive:"Langganan aktif.",planNoteNone:"Tidak ada langganan Grok aktif untuk login ini.",rowName:"Nama",rowAccount:"Akun",rowPlan:"Paket",rowOffer:"Penawaran aktif",rowUsage:"Pemakaian mingguan",rowPeriod:"Periode saat ini",rowBalance:"Saldo prabayar",pctUsed:"% terpakai",usedWord:"Terpakai",capWord:"Batas",errProxyNoJson:"Proxy tidak mengembalikan JSON — yang diterima: ",yes:"Ya",no:"Tidak",errCheckFail:"Tidak bisa memeriksa — coba lagi nanti.",errProxy:"Kesalahan proxy",errNotLoggedIn:"Belum masuk ke Grok — jalankan `grok login --device-auth` di VPS.",errSessionExpired:"Sesi Grok kedaluwarsa — jalankan lagi `grok login --device-auth` di VPS.",footer:"Pemeriksa tidak resmi — tidak berafiliasi dengan xAI."},
+hi:{sub:"एक बार लॉगिन करें — फिर बस जाँचें टैप करें। कुछ पेस्ट नहीं करना है।",cardLabel:"SuperGrok / Heavy — प्लान + साप्ताहिक उपयोग",cardHintA:"टोकन पहले से VPS पर सहेजा गया है (एक बार ",cardHintB:" ही काफी है) — यहाँ कुछ भी पेस्ट करने की ज़रूरत नहीं है, और टोकन कभी दिखाया नहीं जाता।",checkBtn:"सदस्यता जाँचें",checking:"जाँच हो रही है…",activeSub:"सदस्यता सक्रिय है",noActiveSub:"कोई सक्रिय सदस्यता नहीं है",planNoteActive:"सदस्यता सक्रिय है।",planNoteNone:"इस लॉगिन के लिए कोई सक्रिय Grok सदस्यता नहीं मिली।",rowName:"नाम",rowAccount:"खाता",rowPlan:"प्लान",rowOffer:"सक्रिय ऑफ़र",rowUsage:"साप्ताहिक उपयोग",rowPeriod:"वर्तमान अवधि",rowBalance:"प्रीपेड शेष",pctUsed:"% उपयोग हो चुका",usedWord:"उपयोग",capWord:"सीमा",errProxyNoJson:"प्रॉक्सी ने JSON नहीं लौटाया — मिला: ",yes:"हाँ",no:"नहीं",errCheckFail:"जाँच नहीं हो सकी — बाद में पुनः प्रयास करें।",errProxy:"प्रॉक्सी त्रुटि",errNotLoggedIn:"Grok में अभी लॉगिन नहीं हुआ है — VPS पर `grok login --device-auth` चलाएँ।",errSessionExpired:"Grok सत्र समाप्त हो गया है — VPS पर `grok login --device-auth` फिर से चलाएँ।",footer:"अनौपचारिक चेकर — xAI से संबद्ध नहीं है।"}
+};
+let LANG='my';
+try{ LANG=localStorage.getItem('sc_lang')||'my'; }catch(e){}
+if(!I18N[LANG]) LANG='my';
+function t(k){ const d=I18N[LANG]||{}; if(d[k]!==undefined) return d[k]; if(I18N.my[k]!==undefined) return I18N.my[k]; if(I18N.en[k]!==undefined) return I18N.en[k]; return k; }
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
+  const b=document.getElementById('langBtn'); if(b) b.textContent='🌐 '+LANG_NAMES[LANG];
+  document.querySelectorAll('.lang-opt').forEach(function(o){ o.classList.toggle('active',o.getAttribute('data-lang')===LANG); });
+  document.documentElement.lang=LANG;
+}
+function setLang(l){ if(!I18N[l]) return; LANG=l; try{ localStorage.setItem('sc_lang',l); }catch(e){} applyLang(); closeLangPopup(); }
+function toggleLangPopup(e){ if(e) e.stopPropagation(); const p=document.getElementById('langPopup'); if(p) p.classList.toggle('open'); }
+function closeLangPopup(){ const p=document.getElementById('langPopup'); if(p) p.classList.remove('open'); }
+document.addEventListener('click',function(e){ const w=document.querySelector('.lang-wrap'); if(w&&!w.contains(e.target)) closeLangPopup(); });
+// Translate the two known Burmese server error strings; anything else passes through.
+function serverErr(m){
+  if(m.indexOf('မလုပ်ရသေးဘူး')>=0) return t('errNotLoggedIn');
+  if(/expired/i.test(m)) return t('errSessionExpired');
+  return m;
+}
+
 // Hub link: Pages serves the hub at the repo root ('../' from /grok/),
 // the VPS serves it at /star.
 const backLink=document.getElementById('backLink');
@@ -117,22 +171,22 @@ function render(data){
   document.getElementById('planName').textContent = tier;
   const active = !!data.active;
   const badge = document.getElementById('statusBadge');
-  badge.textContent = active ? 'Active subscription' : 'No active subscription';
+  badge.textContent = active ? t('activeSub') : t('noActiveSub');
   badge.className = 'badge' + (active ? '' : ' free');
-  document.getElementById('planNote').textContent = active ? 'Subscription is active.' : 'No active Grok subscription found for this login.';
+  document.getElementById('planNote').textContent = active ? t('planNoteActive') : t('planNoteNone');
   const prof = data.profile || {};
   document.getElementById('rName').textContent = prof.name || '—';
   document.getElementById('rEmail').textContent = prof.email || '—';
   document.getElementById('rPlan').textContent = tier;
-  document.getElementById('rActive').textContent = active ? 'Yes' : 'No';
+  document.getElementById('rActive').textContent = active ? t('yes') : t('no');
   document.getElementById('rOffer').textContent = data.offer || '—';
   const b = data.billing || {};
   let usage = '—';
-  if(b.creditUsagePercent !== undefined && b.creditUsagePercent !== null) usage = b.creditUsagePercent + '% used';
+  if(b.creditUsagePercent !== undefined && b.creditUsagePercent !== null) usage = b.creditUsagePercent + t('pctUsed');
   else if(typeof b.onDemandUsed === 'number' && typeof b.onDemandCap === 'number' && b.onDemandCap > 0)
-    usage = Math.round(b.onDemandUsed / b.onDemandCap * 100) + '% used (' + b.onDemandUsed + ' / ' + b.onDemandCap + ')';
+    usage = Math.round(b.onDemandUsed / b.onDemandCap * 100) + t('pctUsed') + ' (' + b.onDemandUsed + ' / ' + b.onDemandCap + ')';
   else if(b.onDemandUsed !== undefined && b.onDemandUsed !== null)
-    usage = 'Used: ' + b.onDemandUsed + ((b.onDemandCap !== undefined && b.onDemandCap !== null) ? ' / Cap: ' + b.onDemandCap : '');
+    usage = t('usedWord') + ': ' + b.onDemandUsed + ((b.onDemandCap !== undefined && b.onDemandCap !== null) ? ' / ' + t('capWord') + ': ' + b.onDemandCap : '');
   document.getElementById('rUsage').textContent = usage;
   document.getElementById('rPeriod').textContent = fmtPeriod(b.currentPeriod);
   document.getElementById('rBalance').textContent =
@@ -142,20 +196,21 @@ function render(data){
 
 async function checkGrok(){
   clearError();
-  const btn=document.getElementById('checkBtn'); btn.disabled=true; btn.textContent='Checking…';
+  const btn=document.getElementById('checkBtn'); btn.disabled=true; btn.textContent=t('checking');
   try{
     const r=await fetch(GROK_CHECK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
     const text=await r.text();
     let data;
-    try{ data=JSON.parse(text); }catch(e){ showError('Proxy က JSON မပြန်ဘူး: ' + text.slice(0,200)); return; }
-    if(!r.ok){ showError(data.error || ('Proxy error ('+r.status+')')); return; }
+    try{ data=JSON.parse(text); }catch(e){ showError(t('errProxyNoJson') + text.slice(0,200)); return; }
+    if(!r.ok){ showError(data.error ? serverErr(data.error) : (t('errProxy')+' ('+r.status+')')); return; }
     render(data);
   }catch(e){
-    showError('Check လုပ်လို့ မရဘူး — ခဏနေပြန်စမ်းပါ။');
+    showError(t('errCheckFail'));
   }finally{
-    btn.disabled=false; btn.textContent='Check subscription';
+    btn.disabled=false; btn.textContent=t('checkBtn');
   }
 }
+applyLang();
 </script>
 </body>
 </html>

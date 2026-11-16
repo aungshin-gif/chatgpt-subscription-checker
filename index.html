@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="my">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -89,7 +89,7 @@
 <header>
   <div class="topbar">
     <div class="lang-wrap">
-      <button class="mini-btn" type="button" id="langBtn" onclick="toggleLangPopup(event)">🌐 မြန်မာ</button>
+      <button class="mini-btn" type="button" id="langBtn" onclick="toggleLangPopup(event)">🌐 English</button>
       <div class="lang-popup" id="langPopup">
         <button type="button" class="lang-opt" data-lang="en" onclick="setLang('en')">English</button>
         <button type="button" class="lang-opt" data-lang="my" onclick="setLang('my')">မြန်မာ (Myanmar)</button>
@@ -110,7 +110,7 @@
       <span class="cat-logo"><svg viewBox="0 0 2406 2406" aria-hidden="true"><path id="cgk" d="M1107.3 299.1c-197.999 0-373.9 127.3-435.2 315.3L650 743.5v427.9c0 21.4 11 40.4 29.4 51.4l344.5 198.515V833.3h.1v-27.9L1372.7 604c33.715-19.52 70.44-32.857 108.47-39.828L1447.6 450.3C1361 353.5 1237.1 298.5 1107.3 299.1zm0 117.5-.6.6c79.699 0 156.3 27.5 217.6 78.4-2.5 1.2-7.4 4.3-11 6.1L952.8 709.3c-18.4 10.4-29.4 30-29.4 51.4V1248l-155.1-89.4V755.8c-.1-187.099 151.601-338.9 339-339.2z" fill="#1a1a2e"/><use href="#cgk" transform="rotate(60 1203 1203)"/><use href="#cgk" transform="rotate(120 1203 1203)"/><use href="#cgk" transform="rotate(180 1203 1203)"/><use href="#cgk" transform="rotate(240 1203 1203)"/><use href="#cgk" transform="rotate(300 1203 1203)"/></svg></span>
       <span>
         <h2>ChatGPT</h2>
-        <p data-i18n="cgDesc">Plus / Pro / Free — Session paste လုပ်ပြီး စစ်မယ်။</p>
+        <p data-i18n="cgDesc">Plus / Pro / Free — paste your Session to check.</p>
       </span>
       <span class="arrow">→</span>
     </a>
@@ -122,78 +122,78 @@
         <div class="logo-ring"><img src="https://aungshin-gif.github.io/chatgpt-subscription-checker/karinas.jpg" alt="Karinas"></div>
       </div>
       <h1>★ Star Checking</h1>
-      <p class="sub" data-i18n="hubSub">Subscription စစ်တာတွေ တစ်နေရာတည်း — နှိပ်ပြီး ရွေးပါ။</p>
+      <p class="sub" data-i18n="hubSub">All your subscription checks in one place — tap to choose.</p>
     </div>
 
     <a class="card cat reveal" id="linkGrok" href="grok/">
       <span class="grok-badge"><svg viewBox="0 0 34 33" aria-hidden="true"><path d="M13.2371 21.0407L24.3186 12.8506C24.8619 12.4491 25.6384 12.6057 25.8973 13.2294C27.2597 16.5185 26.651 20.4712 23.9403 23.1851C21.2297 25.8989 17.4581 26.4941 14.0108 25.1386L10.2449 26.8843C15.6463 30.5806 22.2053 29.6665 26.304 25.5601C29.5551 22.3051 30.562 17.8683 29.6205 13.8673L29.629 13.8758C28.2637 7.99809 29.9647 5.64871 33.449 0.844576C33.5314 0.730667 33.6139 0.616757 33.6964 0.5L29.1113 5.09055V5.07631L13.2343 21.0436" fill="#fff"/><path d="M10.9503 23.0313C7.07343 19.3235 7.74185 13.5853 11.0498 10.2763C13.4959 7.82722 17.5036 6.82767 21.0021 8.2971L24.7595 6.55998C24.0826 6.07017 23.215 5.54334 22.2195 5.17313C17.7198 3.31926 12.3326 4.24192 8.67479 7.90126C5.15635 11.4239 4.0499 16.8403 5.94992 21.4622C7.36924 24.9165 5.04257 27.3598 2.69884 29.826C1.86829 30.7002 1.0349 31.5745 0.36364 32.5L10.9474 23.0341" fill="#fff"/></svg></span>
       <span>
         <h2>Grok</h2>
-        <p data-i18n="grokDesc">SuperGrok / Heavy — Login တစ်ခါပဲ, ပြီးရင် Check နှိပ်ရုံပဲ။</p>
+        <p data-i18n="grokDesc">SuperGrok / Heavy — log in once, then just tap Check.</p>
       </span>
       <span class="arrow">→</span>
     </a>
   </div>
 
-  <p class="hint reveal" data-i18n="hubHint">Session / token ကို ဘယ်နေရာမှ မသိမ်းဘူး။</p>
+  <p class="hint reveal" data-i18n="hubHint">Your Session / token is never stored anywhere.</p>
 </main>
 <footer>
   <div class="foot-links reveal">
     <button type="button" class="foot-btn" onclick="openModal('faq')"><span class="foot-ico" aria-hidden="true">?</span><span data-i18n="footerFaq">FAQ</span></button>
-    <button type="button" class="foot-btn" onclick="openModal('guide')"><span class="foot-ico" aria-hidden="true">✓</span><span data-i18n="footerGuide">လမ်းညွှန်ချက်</span></button>
-    <button type="button" class="foot-btn" onclick="openModal('purpose')"><span class="foot-ico" aria-hidden="true">★</span><span data-i18n="footerPurpose">ရည်ရွယ်ချက်</span></button>
-    <button type="button" class="foot-btn" onclick="openModal('support')"><span class="foot-ico" aria-hidden="true">✉</span><span data-i18n="footerSupport">အကူအညီ</span></button>
+    <button type="button" class="foot-btn" onclick="openModal('guide')"><span class="foot-ico" aria-hidden="true">✓</span><span data-i18n="footerGuide">Guidelines</span></button>
+    <button type="button" class="foot-btn" onclick="openModal('purpose')"><span class="foot-ico" aria-hidden="true">★</span><span data-i18n="footerPurpose">Purpose</span></button>
+    <button type="button" class="foot-btn" onclick="openModal('support')"><span class="foot-ico" aria-hidden="true">✉</span><span data-i18n="footerSupport">Support</span></button>
   </div>
   <a class="x-link reveal" href="https://x.com/shinloveskyaw" target="_blank" rel="noopener">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" fill="#1DA1F2"/></svg>
     <span>@shinloveskyaw</span>
   </a>
-  <div class="reveal"><span data-i18n="hubFooter">Unofficial checkers — OpenAI / xAI နဲ့ မသက်ဆိုင်ပါ။</span><br><br><span class="dev-badge">Developed by Diameter X</span></div>
+  <div class="reveal"><span data-i18n="hubFooter">Unofficial checkers — not affiliated with OpenAI / xAI.</span><br><br><span class="dev-badge">Developed by Diameter X</span></div>
 </footer>
 
 <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
   <div class="modal" role="dialog" aria-modal="true">
-    <button type="button" class="mini-btn modal-close" onclick="closeModal()" data-i18n="modalClose">ပိတ်မယ်</button>
+    <button type="button" class="mini-btn modal-close" onclick="closeModal()" data-i18n="modalClose">Close</button>
     <div class="modal-panel" id="panel-faq">
-      <h2 data-i18n="faqTitle">မေးလေ့ရှိတဲ့ မေးခွန်းများ</h2>
-      <h3 data-i18n="faqQ1">Star Checking က ဘာတွေ စစ်ပေးတာလဲ?</h3>
-      <p data-i18n="faqA1">ChatGPT — Plan (Plus / Pro / Free)၊ သက်တမ်းကုန်ရက်၊ auto-renewal။ Grok — Plan (SuperGrok / Heavy / Free) နဲ့ ဒီတစ်ပတ်စာ usage။</p>
-      <h3 data-i18n="faqQ2">ကျွန်တော့် Session ကို သိမ်းထားတာလား?</h3>
-      <p data-i18n="faqA2">မသိမ်းဘူး။ Session ကို စစ်ဖို့ပဲ သုံးပြီး စစ်ပြီးတာနဲ့ ချက်ချင်း ရှင်းပစ်တယ်။ ဘယ်သူမှ မမြင်ရဘူး။</p>
-      <h3 data-i18n="faqQ3">401 error ဆိုတာ ဘာလဲ?</h3>
-      <p data-i18n="faqA3">Session သက်တမ်းကုန်သွားတာ။ Session အသစ် ပြန်ယူပြီး ပြန်စစ်ပါ။</p>
-      <h3 data-i18n="faqQ4">403 error ဆိုတာ ဘာလဲ? (Grok)</h3>
-      <p data-i18n="faqA4">Grok login သက်တမ်းကုန်သွားတာ။ Server မှာ 'grok login' ပြန်လုပ်ပြီး ပြန်စစ်ပါ။</p>
+      <h2 data-i18n="faqTitle">Frequently asked questions</h2>
+      <h3 data-i18n="faqQ1">What does Star Checking check?</h3>
+      <p data-i18n="faqA1">ChatGPT — your plan (Plus / Pro / Free), expiry date and auto-renewal. Grok — your plan (SuperGrok / Heavy / Free) and this week's usage.</p>
+      <h3 data-i18n="faqQ2">Is my Session stored anywhere?</h3>
+      <p data-i18n="faqA2">No. Your Session is only used for the check and cleared right after. It is never saved or shown to anyone.</p>
+      <h3 data-i18n="faqQ3">What does a 401 error mean?</h3>
+      <p data-i18n="faqA3">Your Session has expired. Get a fresh Session and check again.</p>
+      <h3 data-i18n="faqQ4">What does a 403 error mean? (Grok)</h3>
+      <p data-i18n="faqA4">The Grok login has expired. Run 'grok login' again on the server and check again.</p>
     </div>
     <div class="modal-panel" id="panel-guide" hidden>
-      <h2 data-i18n="guideTitle">လမ်းညွှန်ချက်</h2>
+      <h2 data-i18n="guideTitle">Guidelines</h2>
       <ul>
-        <li data-i18n="guideR1">Session ကို ဘယ်သူ့ကိုမှ မမျှပါနဲ့ — password နဲ့ အတူတူပဲ။</li>
-        <li data-i18n="guideR2">ကိုယ့်အကောင့်ကိုပဲ စစ်ပါ။</li>
-        <li data-i18n="guideR3">Token တွေ သက်တမ်းကုန်တယ်။ ပြန် login လုပ်ဖို့ တောင်းရင် ပြန်လုပ်ပြီး ပြန်စစ်ပါ။</li>
-        <li data-i18n="guideR4">Session ကို chat တွေ၊ screenshot တွေမှာ မကူးပါနဲ့။</li>
+        <li data-i18n="guideR1">Never share your Session with anyone — it is like your password.</li>
+        <li data-i18n="guideR2">Check only your own accounts.</li>
+        <li data-i18n="guideR3">Tokens expire. If a check asks you to re-login, do it and try again.</li>
+        <li data-i18n="guideR4">Never paste your Session in chats or screenshots.</li>
       </ul>
     </div>
     <div class="modal-panel" id="panel-purpose" hidden>
-      <h2 data-i18n="purposeTitle">ကျွန်တော်တို့ရဲ့ ရည်ရွယ်ချက်</h2>
-      <p data-i18n="purposeP1">Star Checking က ကိုယ့် ChatGPT နဲ့ Grok subscription တွေကို အမြန်ဆုံး စစ်နိုင်တဲ့ အခမဲ့ နည်းလမ်းပါ — တစ်နေရာတည်းမှာ အကုန်စစ်လို့ရတယ်။</p>
+      <h2 data-i18n="purposeTitle">Our purpose</h2>
+      <p data-i18n="purposeP1">Star Checking is a free, quick way to check your own ChatGPT and Grok subscriptions — all in one place.</p>
       <ul>
-        <li data-i18n="purposeL1">ChatGPT — Plan၊ သက်တမ်းကုန်ရက်၊ auto-renewal</li>
-        <li data-i18n="purposeL2">Grok — Plan နဲ့ ဒီတစ်ပတ်စာ usage</li>
-        <li data-i18n="purposeL3">အခမဲ့ သုံးလို့ရတယ် — အကောင့် လိုအပ်ဘူး</li>
+        <li data-i18n="purposeL1">ChatGPT — plan, expiry date, auto-renewal</li>
+        <li data-i18n="purposeL2">Grok — plan and this week's usage</li>
+        <li data-i18n="purposeL3">Free to use — no account needed</li>
       </ul>
-      <p data-i18n="purposeP2">ဖတ်ရုံပဲ — ဘာမှ မပြောင်းဘူး။ Session / token ကို ဘယ်နေရာမှ မသိမ်းဘူး၊ မမျှဘူး — စစ်ဖို့ပဲ သုံးပြီး စစ်ပြီးတာနဲ့ ချက်ချင်း ရှင်းပစ်တယ်။</p>
+      <p data-i18n="purposeP2">It only reads — it never changes anything. Your Session / token is never stored, saved or shared; it is used for the check only and cleared right after.</p>
     </div>
     <div class="modal-panel" id="panel-support" hidden>
-      <h2 data-i18n="supportTitle">အကူအညီ</h2>
-      <p data-i18n="supportP1">တစ်ခုခု အဆင်မပြေဘူးလား၊ မေးစရာရှိလား?</p>
-      <p><span data-i18n="supportP2">X (Twitter) မှာ ဆက်သွယ်ပါ:</span> <a class="x-link-inline" href="https://x.com/shinloveskyaw" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" fill="#1DA1F2"/></svg>@shinloveskyaw</a></p>
+      <h2 data-i18n="supportTitle">Support</h2>
+      <p data-i18n="supportP1">Something not working, or a question about a check?</p>
+      <p><span data-i18n="supportP2">Message us on X (Twitter):</span> <a class="x-link-inline" href="https://x.com/shinloveskyaw" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" fill="#1DA1F2"/></svg>@shinloveskyaw</a></p>
     </div>
   </div>
 </div>
 
 <script>
-// Language switcher: 9 languages, persisted in localStorage ('sc_lang'), default Myanmar.
+// Language switcher: 9 languages, persisted in localStorage ('sc_lang'), default English.
 const LANG_NAMES={en:"English",my:"မြန်မာ",zh:"中文",ru:"Русский",ja:"日本語",ko:"한국어",de:"Deutsch",id:"Bahasa Indonesia",hi:"हिन्दी"};
 const I18N={
 en:{hubSub:"All your subscription checks in one place — tap to choose.",cgDesc:"Plus / Pro / Free — paste your Session to check.",grokDesc:"SuperGrok / Heavy — log in once, then just tap Check.",hubHint:"Your Session / token is never stored anywhere.",hubFooter:"Unofficial checkers — not affiliated with OpenAI / xAI.",footerFaq:"FAQ",footerGuide:"Guidelines",footerSupport:"Support",modalClose:"Close",faqTitle:"Frequently asked questions",faqQ1:"What does Star Checking check?",faqA1:"ChatGPT — your plan (Plus / Pro / Free), expiry date and auto-renewal. Grok — your plan (SuperGrok / Heavy / Free) and this week's usage.",faqQ2:"Is my Session stored anywhere?",faqA2:"No. Your Session is only used for the check and cleared right after. It is never saved or shown to anyone.",faqQ3:"What does a 401 error mean?",faqA3:"Your Session has expired. Get a fresh Session and check again.",faqQ4:"What does a 403 error mean? (Grok)",faqA4:"The Grok login has expired. Run 'grok login' again on the server and check again.",guideTitle:"Guidelines",guideR1:"Never share your Session with anyone — it is like your password.",guideR2:"Check only your own accounts.",guideR3:"Tokens expire. If a check asks you to re-login, do it and try again.",guideR4:"Never paste your Session in chats or screenshots.",supportTitle:"Support",supportP1:"Something not working, or a question about a check?",supportP2:"Message us on X (Twitter):",footerPurpose:"Purpose",purposeTitle:"Our purpose",purposeP1:"Star Checking is a free, quick way to check your own ChatGPT and Grok subscriptions — all in one place.",purposeL1:"ChatGPT — plan, expiry date, auto-renewal",purposeL2:"Grok — plan and this week's usage",purposeL3:"Free to use — no account needed",purposeP2:"It only reads — it never changes anything. Your Session / token is never stored, saved or shared; it is used for the check only and cleared right after."},
@@ -206,9 +206,9 @@ de:{hubSub:"Alle Abo-Prüfungen an einem Ort — tippen zum Auswählen.",cgDesc:
 id:{hubSub:"Semua pemeriksaan langganan di satu tempat — ketuk untuk memilih.",cgDesc:"Plus / Pro / Free — tempel Session untuk memeriksa.",grokDesc:"SuperGrok / Heavy — masuk sekali, lalu tinggal ketuk Periksa.",hubHint:"Session / token Anda tidak pernah disimpan di mana pun.",hubFooter:"Pemeriksa tidak resmi — tidak berafiliasi dengan OpenAI / xAI.",footerFaq:"FAQ",footerGuide:"Panduan",footerSupport:"Dukungan",modalClose:"Tutup",faqTitle:"Pertanyaan Umum",faqQ1:"Apa yang diperiksa Star Checking?",faqA1:"ChatGPT — paket (Plus / Pro / Free), tanggal kedaluwarsa, dan perpanjangan otomatis. Grok — paket (SuperGrok / Heavy / Free) dan pemakaian minggu ini.",faqQ2:"Apakah Session saya disimpan?",faqA2:"Tidak. Session hanya dipakai untuk pemeriksaan dan langsung dihapus setelahnya. Tidak pernah disimpan atau ditampilkan ke siapa pun.",faqQ3:"Apa arti error 401?",faqA3:"Session Anda sudah kedaluwarsa. Ambil Session baru lalu periksa lagi.",faqQ4:"Apa arti error 403? (Grok)",faqA4:"Login Grok sudah kedaluwarsa. Jalankan 'grok login' lagi di server, lalu periksa kembali.",guideTitle:"Panduan",guideR1:"Jangan bagikan Session Anda ke siapa pun — itu seperti kata sandi.",guideR2:"Periksa hanya akun Anda sendiri.",guideR3:"Token bisa kedaluwarsa. Jika pemeriksaan meminta login ulang, login lagi lalu coba kembali.",guideR4:"Jangan tempel Session Anda di chat atau tangkapan layar.",supportTitle:"Dukungan",supportP1:"Ada yang tidak berfungsi, atau ada pertanyaan tentang pemeriksaan?",supportP2:"Hubungi kami di X (Twitter):",footerPurpose:"Tujuan",purposeTitle:"Tujuan kami",purposeP1:"Star Checking adalah cara gratis dan cepat untuk memeriksa langganan ChatGPT dan Grok Anda sendiri — semuanya di satu tempat.",purposeL1:"ChatGPT — paket, tanggal kedaluwarsa, perpanjangan otomatis",purposeL2:"Grok — paket dan pemakaian minggu ini",purposeL3:"Gratis — tidak perlu akun",purposeP2:"Hanya membaca — tidak mengubah apa pun. Session / token Anda tidak pernah disimpan atau dibagikan; hanya dipakai untuk pemeriksaan dan langsung dihapus setelahnya."},
 hi:{hubSub:"सभी सदस्यता जाँच एक ही जगह — चुनने के लिए टैप करें।",cgDesc:"Plus / Pro / Free — जाँचने के लिए Session पेस्ट करें।",grokDesc:"SuperGrok / Heavy — एक बार लॉगिन करें, फिर बस जाँचें टैप करें।",hubHint:"आपका Session / टोकन कहीं भी सहेजा नहीं जाता।",hubFooter:"अनौपचारिक चेकर — OpenAI / xAI से संबद्ध नहीं है।",footerFaq:"सामान्य प्रश्न",footerGuide:"दिशा-निर्देश",footerSupport:"सहायता",modalClose:"बंद करें",faqTitle:"सामान्य प्रश्न",faqQ1:"Star Checking क्या जाँचता है?",faqA1:"ChatGPT — प्लान (Plus / Pro / Free), समाप्ति तिथि और ऑटो-रिन्यूअल। Grok — प्लान (SuperGrok / Heavy / Free) और इस सप्ताह का उपयोग।",faqQ2:"क्या मेरा Session सहेजा जाता है?",faqA2:"नहीं। Session केवल जाँच के लिए उपयोग होता है और उसके तुरंत बाद हटा दिया जाता है। यह कहीं सहेजा नहीं जाता और किसी को दिखाया नहीं जाता।",faqQ3:"401 त्रुटि का क्या अर्थ है?",faqA3:"आपका Session समाप्त हो गया है। नया Session लेकर फिर से जाँचें।",faqQ4:"403 त्रुटि का क्या अर्थ है? (Grok)",faqA4:"Grok लॉगिन समाप्त हो गया है। सर्वर पर 'grok login' फिर से चलाएँ और फिर जाँचें।",guideTitle:"दिशा-निर्देश",guideR1:"अपना Session किसी से साझा न करें — यह पासवर्ड जैसा है।",guideR2:"केवल अपने खातों की जाँच करें।",guideR3:"टोकन समाप्त हो जाते हैं। यदि जाँच फिर से लॉगिन करने को कहे, तो लॉगिन करके पुनः प्रयास करें।",guideR4:"अपना Session चैट या स्क्रीनशॉट में पेस्ट न करें।",supportTitle:"सहायता",supportP1:"कुछ काम नहीं कर रहा है, या जाँच के बारे में कोई प्रश्न है?",supportP2:"X (Twitter) पर हमसे संपर्क करें:",footerPurpose:"उद्देश्य",purposeTitle:"हमारा उद्देश्य",purposeP1:"Star Checking आपके अपने ChatGPT और Grok सदस्यताओं को एक ही जगह पर तेज़ी से जाँचने का मुफ़्त तरीका है।",purposeL1:"ChatGPT — प्लान, समाप्ति तिथि, ऑटो-रिन्यूअल",purposeL2:"Grok — प्लान और इस सप्ताह का उपयोग",purposeL3:"मुफ़्त उपयोग — खाते की आवश्यकता नहीं",purposeP2:"यह केवल पढ़ता है — कुछ भी बदलता नहीं। आपका Session / टोकन कभी सहेजा या साझा नहीं किया जाता; यह केवल जाँच के लिए उपयोग होता है और उसके तुरंत बाद हटा दिया जाता है।"}
 };
-let LANG='my';
-try{ LANG=localStorage.getItem('sc_lang')||'my'; }catch(e){}
-if(!I18N[LANG]) LANG='my';
+let LANG='en';
+try{ var storedLang=localStorage.getItem('sc_lang'); if(storedLang){ LANG=storedLang; } else { localStorage.setItem('sc_lang','en'); } }catch(e){}
+if(!I18N[LANG]) LANG='en';
 function t(k){ const d=I18N[LANG]||{}; if(d[k]!==undefined) return d[k]; if(I18N.my[k]!==undefined) return I18N.my[k]; if(I18N.en[k]!==undefined) return I18N.en[k]; return k; }
 function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });

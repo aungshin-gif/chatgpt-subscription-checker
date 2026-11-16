@@ -2,7 +2,7 @@
 """ChatGPT subscription checker proxy — stdlib only, no pip install needed.
 
 Run on a VPS (e.g. Contabo):
-    python3 server.py          # listens on 0.0.0.0:8787
+    python3 server.py          # listens on 127.0.0.1:8787 (HOST/PORT env override)
     # or: PORT=8787 python3 server.py
 
 POST /check  {"accessToken": "eyJ..."}
@@ -50,6 +50,8 @@ GROK_OIDC_DISCOVERY = "https://auth.x.ai/.well-known/openid-configuration"
 
 UPSTREAM = "https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27"
 PORT = int(os.environ.get("PORT", "8787"))
+# Loopback by default: the public reaches this only through Caddy (HTTPS).
+HOST = os.environ.get("HOST", "127.0.0.1")
 
 
 UPSTREAM_ME = "https://chatgpt.com/backend-api/me"
@@ -538,5 +540,5 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    print(f"Star Checking proxy on http://0.0.0.0:{PORT}  (POST /check, /grok-check)")
-    ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
+    print(f"Star Checking proxy on http://{HOST}:{PORT}  (POST /check, /grok-check)")
+    ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()

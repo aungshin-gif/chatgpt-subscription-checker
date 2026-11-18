@@ -2,7 +2,7 @@
 """ChatGPT subscription checker proxy — stdlib only, no pip install needed.
 
 Run on a VPS (e.g. Contabo):
-    python3 server.py          # listens on 127.0.0.1:8787 (HOST/PORT env override)
+    python3 server.py          # listens on 0.0.0.0:8787
     # or: PORT=8787 python3 server.py
 
 POST /check  {"accessToken": "eyJ..."}
@@ -20,7 +20,11 @@ Star Checking hub:
   GET /grok     Grok checker (grok/index.html)
   POST /grok-check  Grok subscription + weekly usage, using the token
     from ~/.grok/auth.json (written by `grok login --device-auth`).
-    No token is ever pasted by the user or sent to the browser.
+    Optional body {"auth": "..."} overrides it for ONE check only:
+    a full auth.json, a bare access token, or browser cookies.
+    A pasted credential is never saved, never logged, and never
+    written back to auth.json. Cookies alone usually fail on Grok
+    (it needs a per-path signature) - auth.json / token is preferred.
 
 The accessToken is used for one upstream call and never logged or stored.
 Use behind Caddy/Nginx with HTTPS in production; do not expose plain HTTP
@@ -50,8 +54,6 @@ GROK_OIDC_DISCOVERY = "https://auth.x.ai/.well-known/openid-configuration"
 
 UPSTREAM = "https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27"
 PORT = int(os.environ.get("PORT", "8787"))
-# Loopback by default: the public reaches this only through Caddy (HTTPS).
-HOST = os.environ.get("HOST", "127.0.0.1")
 
 
 UPSTREAM_ME = "https://chatgpt.com/backend-api/me"
@@ -257,6 +259,36 @@ def _val(x):
     return x
 
 
+
+def parse_pasted_grok_auth(raw):
+    """Parse a pasted Grok credential for ONE check only.
+    Returns (tok, entry, cookies) - at most one is set.
+    """
+    if isinstance(raw, dict):
+        entry = _pick_grok_entry({"pasted": raw}) or (raw if raw.get("key") else None)
+        if entry and entry.get("key"):
+            return entry.get("key"), entry, None
+        return None, None, None
+    if not isinstance(raw, str):
+        return None, None, None
+    txt = raw.strip()
+    if not txt:
+        return None, None, None
+    if txt.startswith("{"):
+        try:
+            obj = json.loads(txt)
+        except Exception:
+            return None, None, None
+        if isinstance(obj, dict):
+            entry = _pick_grok_entry(obj) or (obj if obj.get("key") else None)
+            if entry and entry.get("key"):
+                return entry.get("key"), entry, None
+        return None, None, None
+    if "=" in txt and ";" in txt:
+        return None, None, txt
+    return txt, None, None
+
+
 def grok_tier(subs):
     """Pick the active subscription and map it to a tier name.
 
@@ -389,20 +421,41 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200, result)
 
     def _grok_check(self):
-        entry = get_grok_auth_entry()
-        token = entry.get("key") if entry else None
-        if not token:
-            self._send(401, {"error": "Grok login မလုပ်ရသေးဘူး — VPS မှာ `grok login --device-auth` လုပ်ပါ။"})
+        # Optional one-time pasted credential: {"auth": "..."}.
+        # Never saved, never logged, never written to auth.json.
+        pasted_token = pasted_entry = pasted_cookies = None
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+            raw_body = self.rfile.read(length) if length > 0 else b"{}"
+            body = json.loads(raw_body or b"{}") if raw_body else {}
+        except Exception:
+            body = {}
+        if isinstance(body, dict):
+            raw_auth = body.get("auth") or body.get("token") or body.get("authJson")
+            if raw_auth:
+                pasted_token, pasted_entry, pasted_cookies = parse_pasted_grok_auth(raw_auth)
+                if not pasted_token and not pasted_cookies:
+                    self._send(400, {"error": "No usable Grok token found in what you pasted. Paste the full auth.json or the access token."})
+                    return
+        use_pasted = bool(pasted_token or pasted_cookies)
+        entry = pasted_entry if use_pasted else get_grok_auth_entry()
+        token = pasted_token if pasted_token else (entry.get("key") if entry else None)
+        if not token and not pasted_cookies:
+            self._send(401, {"error": "Grok login not done yet - run `grok login --device-auth` on the VPS."})
             return
         # The CLI access token lives only ~6h; refresh it before use
         # when it is expired (the ~7-day refresh token is what lasts).
-        if _grok_token_expired(entry):
+        # Pasted tokens are one-time only: never refreshed, never saved.
+        if not use_pasted and _grok_token_expired(entry):
             token = refresh_grok_token() or token
         headers = {
-            "Authorization": "Bearer " + token,
             "Accept": "application/json",
             "User-Agent": UA,
         }
+        if pasted_cookies:
+            headers["Cookie"] = pasted_cookies
+        if token:
+            headers["Authorization"] = "Bearer " + token
         subs = None
         for attempt in range(2):
             try:
@@ -413,14 +466,18 @@ class Handler(BaseHTTPRequestHandler):
             except urllib.error.HTTPError as e:
                 # 403 is what Grok answers for an expired OAuth token
                 # (oauth2-auth-forbidden, not 401): refresh once and retry.
-                if e.code == 403 and attempt == 0:
+                if e.code == 403 and attempt == 0 and not use_pasted:
                     fresh = refresh_grok_token()
                     if fresh:
                         token = fresh
                         headers["Authorization"] = "Bearer " + token
                         continue
-                if e.code == 401:
+                if e.code == 401 and pasted_cookies:
+                    self._send(401, {"error": "Cookies alone didn't work — Grok needs its auth token. Paste the full auth.json from `grok login` instead."})
+                elif e.code == 401:
                     self._send(401, {"error": "Grok session expired — VPS မှာ `grok login --device-auth` ပြန်လုပ်ပါ။"})
+                elif e.code == 403 and pasted_cookies:
+                    self._send(403, {"error": "Cookies alone didn't work — Grok needs its auth token. Paste the full auth.json from `grok login` instead."})
                 else:
                     self._send(e.code, {"error": f"Grok returned {e.code}"})
                 return
@@ -435,7 +492,6 @@ class Handler(BaseHTTPRequestHandler):
         # First from auth.json itself, then try the session endpoint
         # with the same Bearer token (works only if it accepts it).
         profile = {}
-        entry = get_grok_auth_entry()
         if entry:
             if entry.get("email"):
                 profile["email"] = entry["email"]
@@ -540,5 +596,5 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    print(f"Star Checking proxy on http://{HOST}:{PORT}  (POST /check, /grok-check)")
-    ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
+    print(f"Star Checking proxy on http://0.0.0.0:{PORT}  (POST /check, /grok-check)")
+    ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()

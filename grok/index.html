@@ -44,6 +44,13 @@
   .err{background:#fce8e6;border:1px solid #f5c6cb;color:#a50e0e;border-radius:12px;padding:14px;display:none;white-space:pre-wrap}
   .ok-note{font-size:13px;color:#137333}
   .dev-badge{display:inline-block;border:2px solid #1a1a2e;border-radius:999px;padding:4px 14px;font-weight:800;background:#fff;box-shadow:3px 3px 0 #1a1a2e;color:#1a1a2e}
+  .guide-card{background:#fff8e1}
+  .guide-card ol{list-style:none;padding:0;margin:0;counter-reset:step}
+  .guide-card ol li{counter-increment:step;position:relative;padding:14px 14px 14px 52px;margin:12px 0;background:#fff;border:3px solid #1a1a2e;border-radius:18px;box-shadow:5px 5px 0 #1a1a2e}
+  .guide-card ol li::before{content:counter(step);position:absolute;left:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;line-height:28px;text-align:center;background:#1a1a2e;color:#fff;border-radius:50%;font-weight:800;font-size:15px}
+  .copy-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .copy-box{flex:1;min-width:200px;background:#faf7f0;border:2px solid #1a1a2e;border-radius:12px;padding:10px 12px;font-size:14px;word-break:break-all;box-shadow:inset 2px 2px 0 rgba(0,0,0,.06)}
+  .copy-box code{background:none;padding:0}
   footer{max-width:760px;margin:0 auto;padding:0 18px 30px;color:#777;font-size:13px}
   .lang-wrap{position:relative}
   .lang-popup{position:absolute;right:0;top:calc(100% + 8px);background:#fffdf8;border:3px solid #1a1a2e;border-radius:16px;box-shadow:6px 6px 0 #1a1a2e;padding:6px;display:none;z-index:50;min-width:210px}
@@ -63,7 +70,7 @@
       <p class="sub" data-i18n="sub">Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။</p>
     </div>
   </div>
-  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a><div class="lang-wrap">
+  <div class="topbar"><a class="mini-btn" id="backLink" href="../" style="text-decoration:none">← Star Checking</a><button class="mini-btn" id="guideBtn" onclick="toggleGuide()" data-i18n="guideBtn">Guide — Session ဘယ်လိုယူမလဲ</button><div class="lang-wrap">
       <button class="mini-btn" type="button" id="langBtn" onclick="toggleLangPopup(event)">🌐 မြန်မာ</button>
       <div class="lang-popup" id="langPopup">
         <button type="button" class="lang-opt" data-lang="en" onclick="setLang('en')">English</button>
@@ -92,6 +99,28 @@
     <div class="err" id="error"></div>
   </div>
 
+  <div class="card guide-card" id="guideCard" style="display:none">
+    <div class="label-row"><h3 style="margin:0" data-i18n="guideTitle">Grok Session ဘယ်လိုယူမလဲ</h3><button class="mini-btn" type="button" onclick="toggleGuide()" data-i18n="hide">Hide</button></div>
+    <ol>
+      <li><span data-i18n="step1">Grok CLI ရှိတဲ့ Terminus / terminal မှာ အောက်က command ကို run ပါ — ပေါ်လာတဲ့ device code နဲ့ Grok / X အကောင့်ကို login ဝင်ပါ။</span>
+        <div class="copy-row">
+          <span class="copy-box"><code>grok login --device-auth</code></span>
+          <button class="mini-btn" type="button" id="copyLoginBtn" onclick="copyCmd('grok login --device-auth','copyLoginBtn')" data-i18n="copyCmd">Copy</button>
+        </div>
+      </li>
+      <li><span data-i18n="step2">Login ပြီးရင် အောက်က command နဲ့ auth.json အကုန်ကို Select All → Copy လုပ်ပါ (အစ { ကနေ အဆုံး } အထိ)။</span>
+        <div class="copy-row">
+          <span class="copy-box"><code>cat ~/.grok/auth.json</code></span>
+          <button class="mini-btn" type="button" id="copyCatBtn" onclick="copyCmd('cat ~/.grok/auth.json','copyCatBtn')" data-i18n="copyCmd">Copy</button>
+        </div>
+        <span class="hint" id="copyHint"></span>
+      </li>
+      <li><span data-i18n="step3">ဒီ page က Paste ခလုတ်နဲ့ paste လုပ်ပြီး Check နှိပ်ပါ။</span></li>
+    </ol>
+    <p class="hint" data-i18n="guideNote">Token က ၆ နာရီလောက်ပဲ ခံတယ်, refresh token က ၇ ရက်လောက် — သက်တမ်းကုန်ရင် login ပြန်လုပ်ရမယ်။</p>
+    <p class="hint" data-i18n="guideWarn">ChatGPT လို browser link မရှိဘူး — grok.com/api/auth/session က identity ပဲ ပြတယ်, token မပါဘူး, အဲဒါကို paste လုပ်လို့ မရဘူး။ auth.json က password နဲ့ အတူတူပဲ — Screenshot / chat မှာ မမျှပါနဲ့, checker က တခါပဲ သုံးပြီး စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။</p>
+  </div>
+
   <div class="card" id="result">
     <div><span class="badge" id="statusBadge">Active subscription</span></div>
     <div class="plan" id="planName" style="margin-top:10px">SuperGrok</div>
@@ -114,8 +143,8 @@
 // Language switcher: 9 languages, persisted in localStorage ('sc_lang'), default Myanmar.
 const LANG_NAMES={en:"English",my:"မြန်မာ",zh:"中文",ru:"Русский",ja:"日本語",ko:"한국어",de:"Deutsch",id:"Bahasa Indonesia",hi:"हिन्दी"};
 const I18N={
-en:{sub:"Log in once — then just tap Check. Nothing to paste.",cardLabel:"SuperGrok / Heavy — plan + weekly usage",cardHintA:"The token is already saved on the VPS (one-time ",cardHintB:") — nothing to paste here, and the token is never shown.",checkBtn:"Check subscription",checking:"Checking…",pasteLabel:"Paste a new one (optional)",paste:"Paste",clear:"Clear",pasteHint:"If pasted, that is used once only — never saved on the VPS, cleared right after the check. If empty, the VPS saved login is used. Cookies alone often fail on Grok — prefer auth.json / token.",pasteEmpty:"Clipboard is empty — copy something first.",pasteDone:"Pasted ✓",pasteDenied:"The browser won't allow clipboard access — tap the box and paste it yourself (long-press → Paste).",errCookies:"Cookies alone didn't work — Grok needs its auth token. Paste the full auth.json from `grok login` instead.",errNoAuth:"No usable Grok token found in what you pasted. Paste the full auth.json or the access token.",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActive:"Subscription is active.",planNoteNone:"No active Grok subscription found for this login.",rowName:"Name",rowAccount:"Account",rowPlan:"Plan",rowOffer:"Active offer",rowUsage:"Weekly usage",rowPeriod:"Current period",rowBalance:"Prepaid balance",pctUsed:"% used",usedWord:"Used",capWord:"Cap",errProxyNoJson:"The proxy didn't return JSON — got: ",yes:"Yes",no:"No",errCheckFail:"Couldn't check — try again later.",errProxy:"Proxy error",errNotLoggedIn:"Grok isn't logged in yet — run `grok login --device-auth` on the VPS.",errSessionExpired:"Grok session expired — run `grok login --device-auth` again on the VPS.",footer:"Unofficial checker — not affiliated with xAI."},
-my:{sub:"Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။",cardLabel:"SuperGrok / Heavy — Plan + တစ်ပတ်စာ usage",cardHintA:"Token က VPS ပေါ်မှာ သိမ်းထားပြီးသား (",cardHintB:" တစ်ခါ) — ဒီ page ကနေ ဘာမှ paste လုပ်စရာ မလို, token ကို ဘယ်နေရာမှ မပြဘူး။",checkBtn:"Check subscription",checking:"စစ်နေတယ်…",pasteLabel:"အသစ် paste လုပ်မလား (optional)",paste:"Paste",clear:"ရှင်းမယ်",pasteHint:"အသစ် paste ရင် အဲဒါကိုပဲ တခါသုံးမယ် — VPS မှာ မသိမ်းဘူး, စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။ မထည့်ရင် VPS ထဲက old login ကို သုံးမယ်။ Cookies သီးသန့်ဆိုရင် Grok က လက်မခံတတ်ဘူး — auth.json / token ကို ဦးစားပေးပါ။",pasteEmpty:"Clipboard မှာ ဘာမှ မရှိဘူး — အရင် Copy လုပ်ပါ။",pasteDone:"Paste လုပ်ပြီးပြီ ✓",pasteDenied:"Browser က Clipboard ဖွင့်ခွင့် မပေးဘူး — အကွက်ကို နှိပ်ပြီး ကိုယ်တိုင် Paste လုပ်ပါ (long-press → Paste)။",errCookies:"Cookies သီးသန့်နဲ့ မရဘူး — Grok က auth token လိုတယ်။ `grok login` က auth.json အပြည့်ကို paste ပါ။",errNoAuth:"Paste ထားတာထဲက Grok token ရှာမတွေ့ဘူး။ auth.json အပြည့် ဒါမှမဟုတ် access token ကို paste ပါ။",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActive:"Subscription က active ဖြစ်တယ်။",planNoteNone:"ဒီ login အတွက် active Grok subscription မတွေ့ဘူး။",rowName:"Name",rowAccount:"Account",rowPlan:"Plan",rowOffer:"Active offer",rowUsage:"Weekly usage",rowPeriod:"Current period",rowBalance:"Prepaid balance",pctUsed:"% used",usedWord:"Used",capWord:"Cap",errProxyNoJson:"Proxy က JSON မပြန်ဘူး: ",yes:"Yes",no:"No",errCheckFail:"Check လုပ်လို့ မရဘူး — ခဏနေပြန်စမ်းပါ။",errProxy:"Proxy error",errNotLoggedIn:"Grok login မလုပ်ရသေးဘူး — VPS မှာ `grok login --device-auth` လုပ်ပါ။",errSessionExpired:"Grok session သက်တမ်းကုန်သွားပြီ — VPS မှာ `grok login --device-auth` ပြန်လုပ်ပါ။",footer:"Unofficial checker — xAI နဲ့ မသက်ဆိုင်ပါ။"},
+en:{sub:"Log in once — then just tap Check. Nothing to paste.",cardLabel:"SuperGrok / Heavy — plan + weekly usage",cardHintA:"The token is already saved on the VPS (one-time ",cardHintB:") — nothing to paste here, and the token is never shown.",checkBtn:"Check subscription",checking:"Checking…",guideBtn:"Guide — How to get your Grok Session",hideGuide:"Hide Guide",guideTitle:"How to get your Grok Session",hide:"Hide",step1:"In Terminus / the terminal where the Grok CLI is installed, run the command below — log in with your Grok / X account using the device code it shows.",step2:"After logging in, run the command below and Select All → Copy the whole auth.json (from the first { to the last }).",step3:"On this page, paste with the Paste button and tap Check.",guideNote:"The token lasts only ~6 hours, the refresh token ~7 days — if it expires, log in again.",guideWarn:"There is no browser link like ChatGPT — grok.com/api/auth/session shows identity only, no token, so do not paste that. auth.json is like a password — never share it in screenshots or chat; the checker uses it once only and clears it right after the check.",copyCmd:"Copy",copied:"Copied ✓",copyFail:"Couldn't copy — please copy it yourself.",pasteLabel:"Paste a new one (optional)",paste:"Paste",clear:"Clear",pasteHint:"If pasted, that is used once only — never saved on the VPS, cleared right after the check. If empty, the VPS saved login is used. Cookies alone often fail on Grok — prefer auth.json / token.",pasteEmpty:"Clipboard is empty — copy something first.",pasteDone:"Pasted ✓",pasteDenied:"The browser won't allow clipboard access — tap the box and paste it yourself (long-press → Paste).",errCookies:"Cookies alone didn't work — Grok needs its auth token. Paste the full auth.json from `grok login` instead.",errNoAuth:"No usable Grok token found in what you pasted. Paste the full auth.json or the access token.",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActive:"Subscription is active.",planNoteNone:"No active Grok subscription found for this login.",rowName:"Name",rowAccount:"Account",rowPlan:"Plan",rowOffer:"Active offer",rowUsage:"Weekly usage",rowPeriod:"Current period",rowBalance:"Prepaid balance",pctUsed:"% used",usedWord:"Used",capWord:"Cap",errProxyNoJson:"The proxy didn't return JSON — got: ",yes:"Yes",no:"No",errCheckFail:"Couldn't check — try again later.",errProxy:"Proxy error",errNotLoggedIn:"Grok isn't logged in yet — run `grok login --device-auth` on the VPS.",errSessionExpired:"Grok session expired — run `grok login --device-auth` again on the VPS.",footer:"Unofficial checker — not affiliated with xAI."},
+my:{sub:"Login တစ်ခါပဲ — ပြီးရင် Check နှိပ်ရုံပဲ။ Paste လုပ်စရာ မလို။",cardLabel:"SuperGrok / Heavy — Plan + တစ်ပတ်စာ usage",cardHintA:"Token က VPS ပေါ်မှာ သိမ်းထားပြီးသား (",cardHintB:" တစ်ခါ) — ဒီ page ကနေ ဘာမှ paste လုပ်စရာ မလို, token ကို ဘယ်နေရာမှ မပြဘူး။",checkBtn:"Check subscription",checking:"စစ်နေတယ်…",guideBtn:"Guide — Session ဘယ်လိုယူမလဲ",hideGuide:"Hide Guide",guideTitle:"Grok Session ဘယ်လိုယူမလဲ",hide:"ဖျောက်မယ်",step1:"Grok CLI ရှိတဲ့ Terminus / terminal မှာ အောက်က command ကို run ပါ — ပေါ်လာတဲ့ device code နဲ့ Grok / X အကောင့်ကို login ဝင်ပါ။",step2:"Login ပြီးရင် အောက်က command နဲ့ auth.json အကုန်ကို Select All → Copy လုပ်ပါ (အစ { ကနေ အဆုံး } အထိ)။",step3:"ဒီ page က Paste ခလုတ်နဲ့ paste လုပ်ပြီး Check နှိပ်ပါ။",guideNote:"Token က ၆ နာရီလောက်ပဲ ခံတယ်, refresh token က ၇ ရက်လောက် — သက်တမ်းကုန်ရင် login ပြန်လုပ်ရမယ်။",guideWarn:"ChatGPT လို browser link မရှိဘူး — grok.com/api/auth/session က identity ပဲ ပြတယ်, token မပါဘူး, အဲဒါကို paste လုပ်လို့ မရဘူး။ auth.json က password နဲ့ အတူတူပဲ — Screenshot / chat မှာ မမျှပါနဲ့, checker က တခါပဲ သုံးပြီး စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။",copyCmd:"Copy",copied:"Copy လုပ်ပြီးပြီ ✓",copyFail:"Copy မရဘူး — ကိုယ်တိုင် ကူးပါ။",pasteLabel:"အသစ် paste လုပ်မလား (optional)",paste:"Paste",clear:"ရှင်းမယ်",pasteHint:"အသစ် paste ရင် အဲဒါကိုပဲ တခါသုံးမယ် — VPS မှာ မသိမ်းဘူး, စစ်ပြီးတာနဲ့ ရှင်းပစ်မယ်။ မထည့်ရင် VPS ထဲက old login ကို သုံးမယ်။ Cookies သီးသန့်ဆိုရင် Grok က လက်မခံတတ်ဘူး — auth.json / token ကို ဦးစားပေးပါ။",pasteEmpty:"Clipboard မှာ ဘာမှ မရှိဘူး — အရင် Copy လုပ်ပါ။",pasteDone:"Paste လုပ်ပြီးပြီ ✓",pasteDenied:"Browser က Clipboard ဖွင့်ခွင့် မပေးဘူး — အကွက်ကို နှိပ်ပြီး ကိုယ်တိုင် Paste လုပ်ပါ (long-press → Paste)။",errCookies:"Cookies သီးသန့်နဲ့ မရဘူး — Grok က auth token လိုတယ်။ `grok login` က auth.json အပြည့်ကို paste ပါ။",errNoAuth:"Paste ထားတာထဲက Grok token ရှာမတွေ့ဘူး။ auth.json အပြည့် ဒါမှမဟုတ် access token ကို paste ပါ။",activeSub:"Active subscription",noActiveSub:"No active subscription",planNoteActive:"Subscription က active ဖြစ်တယ်။",planNoteNone:"ဒီ login အတွက် active Grok subscription မတွေ့ဘူး။",rowName:"Name",rowAccount:"Account",rowPlan:"Plan",rowOffer:"Active offer",rowUsage:"Weekly usage",rowPeriod:"Current period",rowBalance:"Prepaid balance",pctUsed:"% used",usedWord:"Used",capWord:"Cap",errProxyNoJson:"Proxy က JSON မပြန်ဘူး: ",yes:"Yes",no:"No",errCheckFail:"Check လုပ်လို့ မရဘူး — ခဏနေပြန်စမ်းပါ။",errProxy:"Proxy error",errNotLoggedIn:"Grok login မလုပ်ရသေးဘူး — VPS မှာ `grok login --device-auth` လုပ်ပါ။",errSessionExpired:"Grok session သက်တမ်းကုန်သွားပြီ — VPS မှာ `grok login --device-auth` ပြန်လုပ်ပါ။",footer:"Unofficial checker — xAI နဲ့ မသက်ဆိုင်ပါ။"},
 zh:{sub:"登录一次 — 之后只需点按“检查”。无需粘贴。",cardLabel:"SuperGrok / Heavy — 套餐 + 每周用量",cardHintA:"令牌已保存在 VPS 上（只需一次 ",cardHintB:"）。这里无需粘贴任何内容，令牌也不会显示。",checkBtn:"检查订阅",checking:"检查中…",activeSub:"订阅有效",noActiveSub:"无有效订阅",planNoteActive:"订阅有效。",planNoteNone:"未找到此登录的有效 Grok 订阅。",rowName:"姓名",rowAccount:"账号",rowPlan:"套餐",rowOffer:"有效优惠",rowUsage:"每周用量",rowPeriod:"当前周期",rowBalance:"预付余额",pctUsed:"% 已使用",usedWord:"已用",capWord:"上限",errProxyNoJson:"代理未返回 JSON — 收到的是：",yes:"是",no:"否",errCheckFail:"无法检查 — 请稍后再试。",errProxy:"代理错误",errNotLoggedIn:"尚未登录 Grok — 请在 VPS 上运行 `grok login --device-auth`。",errSessionExpired:"Grok 会话已过期 — 请在 VPS 上再次运行 `grok login --device-auth`。",footer:"非官方查询工具 — 与 xAI 无关。"},
 ru:{sub:"Войдите один раз — затем просто нажмите «Проверить». Вставлять ничего не нужно.",cardLabel:"SuperGrok / Heavy — тариф + использование за неделю",cardHintA:"Токен уже сохранён на VPS (один раз — ",cardHintB:") — здесь ничего вставлять не нужно, токен нигде не показывается.",checkBtn:"Проверить подписку",checking:"Проверка…",activeSub:"Подписка активна",noActiveSub:"Нет активной подписки",planNoteActive:"Подписка активна.",planNoteNone:"Для этого логина активной подписки Grok не найдено.",rowName:"Имя",rowAccount:"Аккаунт",rowPlan:"Тариф",rowOffer:"Активное предложение",rowUsage:"Использование за неделю",rowPeriod:"Текущий период",rowBalance:"Предоплаченный баланс",pctUsed:"% использовано",usedWord:"Использовано",capWord:"Лимит",errProxyNoJson:"Прокси не вернул JSON — получено: ",yes:"Да",no:"Нет",errCheckFail:"Не удалось проверить — попробуйте позже.",errProxy:"Ошибка прокси",errNotLoggedIn:"Вы ещё не вошли в Grok — выполните `grok login --device-auth` на VPS.",errSessionExpired:"Сессия Grok истекла — снова выполните `grok login --device-auth` на VPS.",footer:"Неофициальная проверка — не связана с xAI."},
 ja:{sub:"ログインは一度だけ — あとは「チェック」をタップするだけ。貼り付けは不要です。",cardLabel:"SuperGrok / Heavy — プラン + 週間使用量",cardHintA:"トークンは VPS に保存済みです（",cardHintB:"は一度だけ）。ここで貼り付ける必要はなく、トークンは表示されません。",checkBtn:"サブスクを確認",checking:"確認中…",activeSub:"サブスク有効",noActiveSub:"有効なサブスクがありません",planNoteActive:"サブスクは有効です。",planNoteNone:"このログインでは有効な Grok サブスクが見つかりません。",rowName:"名前",rowAccount:"アカウント",rowPlan:"プラン",rowOffer:"有効なオファー",rowUsage:"週間使用量",rowPeriod:"現在の期間",rowBalance:"プリペイド残高",pctUsed:"% 使用済み",usedWord:"使用済み",capWord:"上限",errProxyNoJson:"プロキシが JSON を返しませんでした — 返ってきたもの：",yes:"はい",no:"いいえ",errCheckFail:"確認できませんでした — しばらくしてから再試行してください。",errProxy:"プロキシエラー",errNotLoggedIn:"Grok にまだログインしていません — VPS で `grok login --device-auth` を実行してください。",errSessionExpired:"Grok セッションの期限が切れました — VPS で `grok login --device-auth` をもう一度実行してください。",footer:"非公式チェッカー — xAI とは関係ありません。"},
@@ -132,6 +161,8 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ el.placeholder=t(el.getAttribute('data-i18n-ph')); });
   const b=document.getElementById('langBtn'); if(b) b.textContent='🌐 '+LANG_NAMES[LANG];
+  const gb=document.getElementById('guideBtn'), g=document.getElementById('guideCard');
+  if(gb) gb.textContent=(g&&getComputedStyle(g).display!=='none')?t('hideGuide'):t('guideBtn');
   document.querySelectorAll('.lang-opt').forEach(function(o){ o.classList.toggle('active',o.getAttribute('data-lang')===LANG); });
   document.documentElement.lang=LANG;
 }
@@ -202,6 +233,28 @@ function render(data){
   document.getElementById('result').style.display='block';
 }
 
+function toggleGuide(){
+  const g=document.getElementById('guideCard'); if(!g) return;
+  const hidden = getComputedStyle(g).display==='none';
+  g.style.display = hidden ? 'block' : 'none';
+  const b=document.getElementById('guideBtn'); if(b) b.textContent = hidden ? t('hideGuide') : t('guideBtn');
+  if(hidden) g.scrollIntoView({behavior:'smooth', block:'start'});
+}
+async function copyCmd(text, btnId){
+  const hint=document.getElementById('copyHint');
+  const btn=btnId?document.getElementById(btnId):null;
+  const say=(m)=>{ if(hint) hint.textContent=m; };
+  try{
+    await navigator.clipboard.writeText(text);
+    say(t('copied')); if(btn) btn.textContent=t('copied');
+    setTimeout(()=>{ say(''); if(btn) btn.textContent=t('copyCmd'); }, 2000);
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); say(t('copied')); if(btn) btn.textContent=t('copied'); setTimeout(()=>{ say(''); if(btn) btn.textContent=t('copyCmd'); }, 2000); }catch(_){ say(t('copyFail')); }
+    document.body.removeChild(ta);
+  }
+}
 async function pasteIntoGrok(){
   const ta=document.getElementById('grokAuth'); const hint=document.getElementById('pasteHint');
   try{
